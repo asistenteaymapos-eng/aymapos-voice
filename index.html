@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-<title>AymaPOS Core · ECOKAIZEN Smart Price</title>
+<title>AymaPOS Core · ECOKAIZEN Engine</title>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:wght=400;500;700&family=Outfit:wght=300;400;500;600;700;800&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 <style>
@@ -40,7 +40,6 @@ body{background:var(--ink);font-family:'Outfit',sans-serif;color:var(--txt);min-
 .prod-name{font-size:13px;font-weight:600;color:#fff;text-transform:uppercase}
 .prod-qty-price{display:flex;align-items:center;gap:6px;font-family:'DM Mono',monospace;font-size:12px;color:var(--muted);margin-top:4px}
 .price-input-box{background:var(--card2);border:1px solid var(--border);color:var(--green);font-weight:700;font-family:'DM Mono',monospace;font-size:12px;padding:2px 6px;border-radius:6px;width:70px;text-align:right}
-.prod-total{font-family:'DM Mono',monospace;font-size:13px;color:var(--gold-light);font-weight:600;margin-top:4px}
 .btn-delete-item{background:transparent;border:none;color:var(--red);font-size:16px;cursor:pointer;padding:8px;position:absolute;right:6px;top:50%;transform:translateY(-50%)}
 .total-display-box{background:var(--card2);border:1px solid var(--border);border-radius:14px;padding:14px;display:flex;justify-content:space-between;align-items:center;margin-bottom:20px}
 .total-lbl{font-family:'Bebas Neue',sans-serif;font-size:16px;letter-spacing:1px;color:var(--muted)}
@@ -48,7 +47,7 @@ body{background:var(--ink);font-family:'Outfit',sans-serif;color:var(--txt);min-
 .btn-pagar{width:100%;padding:14px;border-radius:14px;background:var(--gold-gradient);border:none;font-family:'Outfit',sans-serif;font-size:15px;font-weight:700;color:var(--ink);cursor:pointer;text-transform:uppercase;margin-bottom:10px}
 .btn-wa{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:12px;border-radius:12px;background:linear-gradient(135deg,var(--wa),var(--wa2));color:#fff;font-size:13px;font-weight:600;text-decoration:none}
 #ticket-print-area{display:none;background:#fff;color:#000;padding:16px;font-family:'Courier New',Courier,monospace;font-size:12px;width:80mm}
-.t-center{text-align:center}.t-bold{font-weight:bold}.t-line{border-bottom:1px dashed #000;margin:8px 0}.t-grid{display:grid;grid-template-columns:50px 1fr 45px 55px;gap:4px}.t-right{text-align:right}
+.t-center{text-align:center}.t-bold{font-weight:bold}.t-line{border-bottom:1px dashed #000;margin:8px 0}.t-grid{display:grid;grid-template-columns:1fr 60px;gap:4px}.t-right{text-align:right}
 @media print{
   body{background:#fff!important;color:#000!important;padding:0!important}
   .smartphone-shell{display:none!important}
@@ -62,8 +61,8 @@ body{background:var(--ink);font-family:'Outfit',sans-serif;color:var(--txt);min-
     <div class="topbar">
       <div class="brand"><div class="logo-icon">EK</div>
         <div>
-          <div class="app-title">AymaPOS Smart</div>
-          <div style="font-size:9px; color:var(--dim)">PRECIOS CON MEMORIA Y EDICIÓN EN VIVO</div>
+          <div class="app-title">AymaPOS Engine</div>
+          <div style="font-size:9px; color:var(--dim)">PRODUCCIÓN · RECONOCIMIENTO ESTRICTO</div>
         </div>
       </div>
       <div style="font-family:'DM Mono',monospace; font-size:10px; color:var(--gold-light)">● ECOKAIZEN</div>
@@ -71,7 +70,7 @@ body{background:var(--ink);font-family:'Outfit',sans-serif;color:var(--txt);min-
     <div class="voice-panel">
       <button class="mic-btn" id="mic-trigger" onclick="toggleVoiceRecognition()">🔊</button>
       <div id="mic-label" style="font-size:11px; font-weight:600; color:var(--gold-light)">Presionar y dictar pedido</div>
-      <div class="transcript-area" id="transcript-txt">"Prueba diciendo: 'plato 15 un ciento' o 'deli un cuarto'..."</div>
+      <div class="transcript-area" id="transcript-txt">"Dicta claro: 'vaso número 12, 4 soles de paquete'..."</div>
       <div class="phone-field">
         <label>WhatsApp del Cliente</label>
         <input type="tel" id="c-phone" value="51949546919" oninput="updateWhatsAppContent()">
@@ -82,7 +81,7 @@ body{background:var(--ink);font-family:'Outfit',sans-serif;color:var(--txt);min-
       <button class="btn-clear-all" id="clear-all-btn" style="display:none;" onclick="clearEntireCart()">🗑️ Vaciar Todo</button>
     </div>
     <div class="items-container" id="cart-wrapper">
-      <div class="empty-state" id="empty-msg">Esperando dictado mayorista. Los precios se pueden editar libremente.</div>
+      <div class="empty-state" id="empty-msg">Esperando dictado exacto de almacén. Precios editables en vivo.</div>
     </div>
     <div class="total-display-box"><span class="total-lbl">TOTAL A COBRAR</span><span class="total-val" id="screen-total">S/ 0.00</span></div>
     <button class="btn-pagar" onclick="window.print()">Imprimir Ticket 80mm 🖨️</button>
@@ -97,9 +96,8 @@ body{background:var(--ink);font-family:'Outfit',sans-serif;color:var(--txt);min-
   <div class="t-center t-bold">PROFORMA / NOTA DE DISTRIBUCIÓN</div>
   <div class="t-line"></div>
   <div>FECHA: <span id="t-fecha">--/--/----</span></div>
-  <div>CLIENTE: <span class="t-bold">Control de Almacén</span></div>
   <div class="t-line"></div>
-  <div class="t-grid t-bold"><div>CANT</div><div>DESCRIPCION</div><div class="t-right">TOTAL</div></div>
+  <div class="t-grid t-bold"><div>DESCRIPCION</div><div class="t-right">TOTAL</div></div>
   <div class="t-line"></div>
   <div id="print-items-area"></div>
   <div class="t-line"></div>
@@ -108,13 +106,6 @@ body{background:var(--ink);font-family:'Outfit',sans-serif;color:var(--txt);min-
   <div class="t-center" style="font-size:10px;">*** Control Interno de Despacho ***</div>
 </div>
 <script>
-// BASE DE DATOS APRENDIDA POR LA IA - PRECIOS SUGERIDOS AUTOMÁTICOS
-const BRAIN_PRICE_DATABASE = {
-  "plato": { ciento: 9.00, cuarto: 2.25, unidades: 0.10, millar: 85.00 },
-  "deli":  { ciento: 40.00, cuarto: 10.00, unidades: 0.50, millar: 380.00 },
-  "bolsa": { ciento: 12.00, cuarto: 3.00, unidades: 0.15, millar: 110.00 }
-};
-
 let cart = []; let recognition; let isListening = false;
 
 if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
@@ -125,105 +116,89 @@ if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
   recognition.onresult = (event) => {
     const textResult = event.results[0][0].transcript.toLowerCase();
     document.getElementById('transcript-txt').innerText = `Escuché: "${event.results[0][0].transcript}"`;
-    processSmartPriceVoice(textResult);
+    processProductionVoice(textResult);
   };
 }
 
 function toggleVoiceRecognition() { if (!recognition) return; isListening ? recognition.stop() : recognition.start(); }
 function stopMicUI() { isListening = false; document.getElementById('mic-trigger').className = "mic-btn"; document.getElementById('mic-label').innerText = "Presionar y dictar pedido"; }
 
-function processSmartPriceVoice(text) {
-  const numbers = text.match(/\d+/g) ? text.match(/\d+/g).map(Number) : [];
+// PARSER CON FILTRADO LINEAL DE ENTIDADES PARA EVITAR COLISIONES
+function processProductionVoice(text) {
+  // Encontrar todos los números de manera secuencial
+  const matchedNumbers = text.match(/\d+/g) ? text.match(/\d+/g).map(Number) : [];
   
-  let familiaKey = "plato"; 
-  let nombreProducto = "PLATO DE CAÑA";
-  let cantidadUnidades = 100; 
-  let detalleCantidad = "1 Ciento (100 und)";
-  let tipoFraccionKey = "ciento";
+  let itemType = "PRODUCTO";
+  let itemIcon = "📦";
+  let itemModel = "";
+  let itemQuantityLabel = "1 Lote";
+  let itemPrice = 0;
 
-  // 1. Clasificar Familia de Empaque y Modelos numéricos
-  if (text.includes("deli") || text.includes("litro") || text.includes("envase")) {
-    familiaKey = "deli";
-    nombreProducto = "ENVASE DELI 1 LITRO";
+  // 1. Clasificación estricta de palabras clave
+  if (text.includes("vaso") || text.includes("bazo")) {
+    itemType = "VASO DE PAPEL"; itemIcon = "🥤";
+  } else if (text.includes("plato") || text.includes("plata")) {
+    itemType = "PLATO DE CAÑA"; itemIcon = "🍽️";
   } else if (text.includes("bolsa") || text.includes("pet")) {
-    familiaKey = "bolsa";
-    nombreProducto = "BOLSA MATERIAL PET";
-    if (numbers.length > 0) nombreProducto += " N° " + numbers[0];
-  } else {
-    // Por defecto es Plato de Caña
-    if (numbers.length > 0 && text.includes("plato")) nombreProducto += " N° " + numbers[0];
+    itemType = "BOLSA PET"; itemIcon = "🛍️";
+  } else if (text.includes("deli") || text.includes("litro")) {
+    itemType = "ENVASE DELI"; itemIcon = "📦";
   }
 
-  // 2. Clasificar Fracción Comercial Mayorista
-  if (text.includes("un cuarto") || text.includes("cuarto") || text.includes("25 unidades") || text.includes("25 und") || text.includes("25")) {
-    cantidadUnidades = 25;
-    detalleCantidad = "1/4 Ciento (25 und)";
-    tipoFraccionKey = "cuarto";
-  } else if (text.includes("medio ciento") || text.includes("50 unidades") || text.includes("50")) {
-    cantidadUnidades = 50;
-    detalleCantidad = "1/2 Ciento (50 und)";
-    tipoFraccionKey = "medio";
-  } else if (text.includes("un millar") || text.includes("millar")) {
-    cantidadUnidades = 1000;
-    detalleCantidad = "1 Millar (1000 und)";
-    tipoFraccionKey = "millar";
-  } else if (text.includes("docena")) {
-    cantidadUnidades = 12;
-    detalleCantidad = "1 Docena (12 und)";
-    tipoFraccionKey = "docena";
+  // 2. Extraer Modelo (si viene inmediatamente después de "número" o "nro")
+  const modelRegex = /(?:número|numero|nro|n°)\s*(\d+)/;
+  const modelMatch = text.match(modelRegex);
+  if (modelMatch) {
+    itemModel = " N° " + modelMatch[1];
+  } else if (matchedNumbers.length > 0 && (text.startsWith("vaso") || text.startsWith("plato") || text.startsWith("bolsa"))) {
+    // Si la frase arranca con el producto y un número (ej: "vaso 12...") tomamos el primer número como modelo
+    itemModel = " N° " + matchedNumbers[0];
+  }
+
+  // 3. Determinar la Unidad de Medida del empaque
+  if (text.includes("paquete")) {
+    itemQuantityLabel = "1 Paquete";
+  } else if (text.includes("un cuarto") || text.includes("cuarto")) {
+    itemQuantityLabel = "1/4 Ciento (25 und)";
+  } else if (text.includes("medio ciento") || text.includes("medio")) {
+    itemQuantityLabel = "1/2 Ciento (50 und)";
+  } else if (text.includes("ciento")) {
+    itemQuantityLabel = "1 Ciento (100 und)";
+  } else if (text.includes("millar")) {
+    itemQuantityLabel = "1 Millar";
   } else if (text.includes("caja")) {
-    cantidadUnidades = 500;
-    detalleCantidad = "1 Caja Cerrada";
-    tipoFraccionKey = "caja";
-  } else if (text.includes("ciento") || text.includes("100")) {
-    cantidadUnidades = 100;
-    detalleCantidad = "1 Ciento (100 und)";
-    tipoFraccionKey = "ciento";
-  } else if (numbers.length > 0) {
-    // Caída por unidades sueltas
-    let valorNum = (numbers.length > 1 && text.includes("plato")) ? numbers[1] : numbers[0];
-    if (valorNum === 25) {
-      cantidadUnidades = 25; detalleCantidad = "1/4 Ciento (25 und)"; tipoFraccionKey = "cuarto";
-    } else {
-      cantidadUnidades = valorNum; detalleCantidad = valorNum + " und."; tipoFraccionKey = "unidades";
-    }
+    itemQuantityLabel = "1 Caja";
   }
 
-  // 3. Asignación Automática Inteligente de Precios desde la base de datos
-  let precioLoteSugerido = 0;
-  const dbConfig = BRAIN_PRICE_DATABASE[familiaKey];
-  
-  if (tipoFraccionKey === "ciento") precioLoteSugerido = dbConfig.ciento;
-  else if (tipoFraccionKey === "cuarto") precioLoteSugerido = dbConfig.cuarto;
-  else if (tipoFraccionKey === "medio") precioLoteSugerido = dbConfig.ciento / 2;
-  else if (tipoFraccionKey === "millar") precioLoteSugerido = dbConfig.millar;
-  else if (tipoFraccionKey === "medio") precioLoteSugerido = dbConfig.millar / 2;
-  else if (tipoFraccionKey === "unidades") precioLoteSugerido = cantidadUnidades * dbConfig.unidades;
-  else precioLoteSugerido = dbConfig.cuarto; // Respaldo de seguridad
-
-  // Si dictaste un precio forzado al final (ej: "un cuarto 11 soles"), pisamos la base de datos
-  if (text.includes("soles") && numbers.length > 0) {
-    precioLoteSugerido = numbers[numbers.length - 1];
+  // 4. Extracción limpia de Precios (Buscamos el número asociado a "soles")
+  const priceRegex = /(\d+)\s*(?:soles|sol)/;
+  const priceMatch = text.match(priceRegex);
+  if (priceMatch) {
+    itemPrice = Number(priceMatch[1]);
+  } else if (matchedNumbers.length > 1) {
+    // Si fallan las letras pero hay dos números, el último número de la frase es el precio de venta
+    itemPrice = matchedNumbers[matchedNumbers.length - 1];
+  } else if (matchedNumbers.length === 1 && !modelMatch) {
+    // Si solo hay un número y no es el modelo, es el precio
+    itemPrice = matchedNumbers[0];
   }
 
-  // Insertar item editable
+  // Inyección segura al array de control
   cart.push({
-    nombre: nombreProducto,
-    icon: familiaKey === "bolsa" ? "🛍️" : (familiaKey === "deli" ? "📦" : "🍽️"),
-    cant: cantidadUnidades,
-    detalleCant: detalleCantidad,
-    total: Number(precioLoteSugerido)
+    displayTitle: `${itemType}${itemModel}`,
+    icon: itemIcon,
+    qtyLabel: itemQuantityLabel,
+    total: Number(itemPrice)
   });
 
   renderCartUI();
 }
 
-// Renderizado con inputs interactivos de edición de precio directo en la celda
 function renderCartUI() {
   const cartWrapper = document.getElementById('cart-wrapper'); const printWrapper = document.getElementById('print-items-area'); const clearBtn = document.getElementById('clear-all-btn');
   cartWrapper.innerHTML = ""; printWrapper.innerHTML = "";
   if (cart.length === 0) {
-    cartWrapper.innerHTML = '<div class="empty-state">Esperando dictado mayorista. Los precios se pueden editar libremente.</div>';
+    cartWrapper.innerHTML = '<div class="empty-state">Esperando dictado exacto de almacén. Precios editables en vivo.</div>';
     clearBtn.style.display = "none"; document.getElementById('screen-total').innerText = "S/ 0.00"; document.getElementById('t-total').innerText = "S/ 0.00"; return;
   }
   clearBtn.style.display = "block"; let totalGeneral = 0;
@@ -233,34 +208,32 @@ function renderCartUI() {
     card.innerHTML = `
       <div class="prod-img-box">${item.icon}</div>
       <div class="prod-details">
-        <div class="prod-name">${item.nombre}</div>
+        <div class="prod-name">${item.displayTitle}</div>
         <div class="prod-qty-price">
-          <span>${item.detalleCant} por S/</span>
-          <input type="number" step="0.10" class="price-input-box" value="${Number(item.total).toFixed(2)}" oninput="updateItemTotalDirectly(${index}, this.value)">
+          <span>${item.qtyLabel} por S/</span>
+          <input type="number" step="0.50" class="price-input-box" value="${Number(item.total).toFixed(2)}" oninput="updateItemPriceLive(${index}, this.value)">
         </div>
       </div>
       <button class="btn-delete-item" onclick="deleteSingleItem(${index})">❌</button>
     `;
     cartWrapper.appendChild(card);
     const printRow = document.createElement('div'); printRow.className = 't-grid';
-    printRow.innerHTML = `<div>${item.cant}</div><div>${item.nombre} (${item.detalleCant})</div><div class="t-right">${Number(item.total).toFixed(2)}</div>`;
+    printRow.innerHTML = `<div>${item.displayTitle} (${item.qtyLabel})</div><div class="t-right">S/ ${迫 = Number(item.total).toFixed(2)}</div>`;
     printWrapper.appendChild(printRow);
   });
   document.getElementById('screen-total').innerText = 'S/ ' + totalGeneral.toFixed(2); document.getElementById('t-total').innerText = 'S/ ' + totalGeneral.toFixed(2); updateWhatsAppContent();
 }
 
-// Función de edición en vivo: al cambiar los soles en pantalla recalcula el total neto al instante
-function updateItemTotalDirectly(index, val) {
+function updateItemPriceLive(index, val) {
   cart[index].total = Number(val) || 0;
-  let totalGeneral = 0;
-  cart.forEach(item => totalGeneral += Number(item.total));
+  let totalGeneral = 0; cart.forEach(item => totalGeneral += Number(item.total));
   document.getElementById('screen-total').innerText = 'S/ ' + totalGeneral.toFixed(2);
   document.getElementById('t-total').innerText = 'S/ ' + totalGeneral.toFixed(2);
   updateWhatsAppContent();
 }
 
 function deleteSingleItem(index) { cart.splice(index, 1); renderCartUI(); }
-function clearEntireCart() { if (confirm("¿Borrar toda la proforma?")) { cart = []; renderCartUI(); } }
+function clearEntireCart() { if (confirm("¿Borrar todo el pedido?")) { cart = []; renderCartUI(); } }
 function generatePdfFile() {
   const element = document.getElementById('ticket-print-area'); element.style.display = 'block';
   const opt = { margin: 0, filename: 'Proforma_EcoKaizen.pdf', image: { type: 'jpeg', quality: 0.98 }, html2canvas: { scale: 3, letterRendering: true }, jsPDF: { unit: 'mm', format: [80, 150], orientation: 'portrait' } };
