@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 <title>AymaPOS Core · ECOKAIZEN</title>
-<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:wght@400;500;700&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:wght=400;500;700&family=Outfit:wght=300;400;500;600;700;800&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 <style>
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
@@ -26,12 +26,12 @@ body{background:var(--ink);font-family:'Outfit',sans-serif;color:var(--txt);min-
 .mic-btn{width:56px;height:56px;border-radius:50%;background:var(--gold-gradient);border:none;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;font-size:20px;color:var(--ink);box-shadow:0 0 15px rgba(212,175,55,0.4);margin-bottom:10px}
 .mic-btn.listening{background:linear-gradient(135deg,var(--red),#ff7693);box-shadow:0 0 20px rgba(255,71,114,0.5);animation:pulse 1.2s infinite}
 @keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.05)}}
-.transcript-area{font-size:12px;color:var(--muted);font-style:italic;min-height:36px;margin-bottom:12px;line-height:1.4}
+.transcript-area{font-size:13px;color:#fff;font-weight:500;background:rgba(255,255,255,0.03);padding:8px;border-radius:10px;min-height:36px;margin-bottom:12px;line-height:1.4;border:1px solid rgba(255,255,255,0.05)}
 .phone-field{display:flex;flex-direction:column;gap:4px;text-align:left}
 .phone-field label{font-family:'DM Mono',monospace;font-size:9px;color:var(--gold-light);text-transform:uppercase}
 .phone-field input{background:var(--card2);border:1px solid rgba(212,175,55,0.2);border-radius:8px;padding:8px 12px;color:var(--txt);width:100%}
 .section-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
-.btn-clear-all{background:transparent;border:1px solid var(--red);color:var(--red);padding:4px 8px;border-radius:6px;font-size:11px;font-weight:600;cursor:pointer;font-family:'Outfit',sans-serif}
+.btn-clear-all{background:transparent;border:1px solid var(--red);color:var(--red);padding:4px 8px;border-radius:6px;font-size:11px;font-weight:600;cursor:pointer}
 .items-container{display:flex;flex-direction:column;gap:12px;margin-bottom:20px}
 .empty-state{text-align:center;padding:30px 20px;color:var(--dim);font-size:13px;border:1px dashed rgba(255,255,255,0.05);border-radius:16px}
 .product-card{background:var(--card);border:1px solid rgba(212,175,55,0.25);border-radius:16px;padding:12px;display:flex;align-items:center;gap:12px;position:relative}
@@ -62,15 +62,15 @@ body{background:var(--ink);font-family:'Outfit',sans-serif;color:var(--txt);min-
       <div class="brand"><div class="logo-icon">EK</div>
         <div>
           <div class="app-title">AymaPOS Core</div>
-          <div style="font-size:9px; color:var(--dim)">RECONOCIMIENTO DE VOZ REAL</div>
+          <div style="font-size:9px; color:var(--dim)">SISTEMA DE VOZ INTELIGENTE</div>
         </div>
       </div>
       <div style="font-family:'DM Mono',monospace; font-size:10px; color:var(--gold-light)">● ECOKAIZEN</div>
     </div>
     <div class="voice-panel">
       <button class="mic-btn" id="mic-trigger" onclick="toggleVoiceRecognition()">🔊</button>
-      <div id="mic-label" style="font-size:11px; font-weight:600; color:var(--gold-light)">Toca para hablar (Voz Real)</div>
-      <div class="transcript-area" id="transcript-txt">"Dicta libremente: ejemplo '100 bolsas'..."</div>
+      <div id="mic-label" style="font-size:11px; font-weight:600; color:var(--gold-light)">Toca para dictar venta</div>
+      <div class="transcript-area" id="transcript-txt">"Presiona el micro y di por ejemplo: '240 platos de caña'..."</div>
       <div class="phone-field">
         <label>WhatsApp del Cliente</label>
         <input type="tel" id="c-phone" value="51949546919" oninput="updateWhatsAppContent()">
@@ -107,53 +107,69 @@ body{background:var(--ink);font-family:'Outfit',sans-serif;color:var(--txt);min-
   <div class="t-center" style="font-size:10px;">*** Documento de Control Interno ***</div>
 </div>
 <script>
+// Diccionario de productos EcoKaizen con tolerancia a errores de dictado (Fuzzy Keywords)
 const PRODUCT_DICTIONARY = [
-  { keywords: ["vaso", "ocho", "8"], nombre: "Vaso de Papel 8oz (Eco)", menor: 0.25, mayor: 0.18, icon: "🥤" },
-  { keywords: ["vaso", "doce", "12"], nombre: "Vaso de Papel 12oz (Eco)", menor: 0.35, mayor: 0.25, icon: "🥤" },
-  { keywords: ["plato", "caña"], nombre: "Plato de Caña de Azúcar", menor: 0.45, mayor: 0.35, icon: "🍽️" },
-  { keywords: ["bowl", "kraft"], nombre: "Bowl de Papel Kraft 12oz", menor: 0.55, mayor: 0.45, icon: "🥣" },
-  { keywords: ["bolsa", "pet"], nombre: "Bolsa de Material PET Sostenible", menor: 0.80, mayor: 0.60, icon: "🛍️" }
+  { keywords: ["plato", "plata", "platito", "caña", "azúcar"], nombre: "Plato de Caña de Azúcar", menor: 0.45, mayor: 0.35, icon: "🍽️" },
+  { keywords: ["bolsa", "bolsas", "pet", "bolsita", "material"], nombre: "Bolsa de Material PET Sostenible", menor: 0.80, mayor: 0.60, icon: "🛍️" },
+  { keywords: ["vaso", "ocho", "8", "8oz"], nombre: "Vaso de Papel 8oz (Eco)", menor: 0.25, mayor: 0.18, icon: "🥤" },
+  { keywords: ["vaso", "doce", "12", "12oz"], nombre: "Vaso de Papel 12oz (Eco)", menor: 0.35, mayor: 0.25, icon: "🥤" },
+  { keywords: ["bowl", "kraft", "tazón", "boul"], nombre: "Bowl de Papel Kraft 12oz", menor: 0.55, mayor: 0.45, icon: "🥣" }
 ];
+
 let cart = []; let recognition; let isListening = false;
 if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
   const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
   recognition = new SpeechRecognition(); recognition.lang = 'es-PE'; recognition.continuous = false; recognition.interimResults = false;
-  recognition.onstart = () => { isListening = true; document.getElementById('mic-trigger').className = "mic-btn listening"; document.getElementById('mic-label').innerText = "Escuchando tu voz..."; };
+  recognition.onstart = () => { isListening = true; document.getElementById('mic-trigger').className = "mic-btn listening"; document.getElementById('mic-label').innerText = "Escuchando..."; };
   recognition.onerror = () => { stopMicUI(); }; recognition.onend = () => { stopMicUI(); };
   recognition.onresult = (event) => {
     const textResult = event.results[0][0].transcript.toLowerCase();
-    document.getElementById('transcript-txt').innerText = `Entendido: "${event.results[0][0].transcript}"`;
+    document.getElementById('transcript-txt').innerText = `Escuché: "${event.results[0][0].transcript}"`;
     processVoiceText(textResult);
   };
 }
+
 function toggleVoiceRecognition() { if (!recognition) return; isListening ? recognition.stop() : recognition.start(); }
-function stopMicUI() { isListening = false; document.getElementById('mic-trigger').className = "mic-btn"; document.getElementById('mic-label').innerText = "Toca para hablar (Voz Real)"; }
+function stopMicUI() { isListening = false; document.getElementById('mic-trigger').className = "mic-btn"; document.getElementById('mic-label').innerText = "Toca para dictar venta"; }
+
 function processVoiceText(text) {
-  const numbersFound = text.match(/\d+/g); const cantidad = numbersFound ? parseInt(numbersFound[0], 10) : 1;
-  let cleanedProductName = text.replace(/\d+/g, '').replace(/unidades|unidad|unds|und|paquetes|paquete|cajas|caja/g, '').trim();
-  if (cleanedProductName.length < 3) cleanedProductName = "Empaque Dictado";
+  const numbersFound = text.match(/\d+/g);
+  const cantidad = numbersFound ? parseInt(numbersFound[0], 10) : 1;
+
   let productMatched = null;
+  // Algoritmo de emparejamiento inteligente por aproximación de palabras clave
   for (let prod of PRODUCT_DICTIONARY) {
-    for (let kw of prod.keywords) { if (text.includes(kw)) { productMatched = prod; break; } }
+    for (let kw of prod.keywords) {
+      if (text.includes(kw)) { productMatched = prod; break; }
+    }
     if (productMatched) break;
   }
+
   if (productMatched) {
-    const usarPrecioMayor = cantidad >= 100; const precioUnitario = usarPrecioMayor ? productMatched.mayor : productMatched.menor;
-    insertOrUpdateCart(productMatched.nombre, productMatched.icon, cantidad, precioUnitario, usarPrecioMayor ? "Por Mayor" : "Por Menor", productMatched.mayor, productMatched.menor);
+    // Si la cantidad es mayor o igual a 100 unidades se activa automáticamente precio por MAYOR
+    const usarPrecioMayor = cantidad >= 100;
+    const precioUnitario = usarPrecioMayor ? productMatched.mayor : productMatched.menor;
+    const tipoPrecio = usarPrecioMayor ? "Por Mayor" : "Por Menor";
+
+    const existingIndex = cart.findIndex(item => item.nombre === productMatched.nombre);
+    if (existingIndex > -1) {
+      cart[existingIndex].cant += cantidad;
+      const nuevaCant = cart[existingIndex].cant;
+      cart[existingIndex].pu = nuevaCant >= 100 ? productMatched.mayor : productMatched.menor;
+      cart[existingIndex].tipo = nuevaCant >= 100 ? "Por Mayor" : "Por Menor";
+    } else {
+      cart.push({
+        nombre: productMatched.nombre, icon: productMatched.icon,
+        cant: cantidad, pu: precioUnitario, tipo: tipoPrecio,
+        mayorPrice: productMatched.mayor, menorPrice: productMatched.menor
+      });
+    }
+    renderCartUI();
   } else {
-    const usarPrecioMayor = cantidad >= 100; const precioBase = usarPrecioMayor ? 0.40 : 0.50;
-    insertOrUpdateCart(cleanedProductName, "📦", cantidad, precioBase, usarPrecioMayor ? "Por Mayor" : "Por Menor", 0.40, 0.50);
+    document.getElementById('transcript-txt').innerText = "⚠️ No entendí el empaque. Di por ejemplo: '240 platos' o '50 bolsas'.";
   }
 }
-function insertOrUpdateCart(nombre, icon, cantidad, pu, tipo, mayorPrice, menorPrice) {
-  const existingIndex = cart.findIndex(item => item.nombre === nombre);
-  if (existingIndex > -1) {
-    cart[existingIndex].cant += cantidad; const nuevaCant = cart[existingIndex].cant;
-    cart[existingIndex].pu = nuevaCant >= 100 ? mayorPrice : menorPrice;
-    cart[existingIndex].tipo = nuevaCant >= 100 ? "Por Mayor" : "Por Menor";
-  } else { cart.push({ nombre, icon, cant: cantidad, pu, tipo, mayorPrice, menorPrice }); }
-  renderCartUI();
-}
+
 function renderCartUI() {
   const cartWrapper = document.getElementById('cart-wrapper'); const printWrapper = document.getElementById('print-items-area'); const clearBtn = document.getElementById('clear-all-btn');
   cartWrapper.innerHTML = ""; printWrapper.innerHTML = "";
