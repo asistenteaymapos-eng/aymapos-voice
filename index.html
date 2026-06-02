@@ -3,9 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-<title>AymaPOS · Voice Command Terminal</title>
+<title>AymaPOS · ECOKAIZEN Voice Core</title>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:wght@400;500;700&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-<!-- Librería para la renderización in situ de PDFs térmicos -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 <style>
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
@@ -22,254 +21,60 @@
   --cyan:#00f0ff;
   --green:#00ffaa;
   --red:#ff4772;
-  --wa:#25D366;
-  --wa2:#128C7E;
-  
-  /* Paleta Oro Premium AymaPOS */
   --gold-light:#ffe89e;
   --gold-mid:#d4af37;
-  --gold-dark:#aa7c11;
   --gold-gradient: linear-gradient(135deg, #ffe89e 0%, #d4af37 40%, #aa7c11 70%, #f3e5ab 100%);
+  --wa:#25D366;--wa2:#128C7E;
 }
 
-body{
-  background:var(--ink);
-  font-family:'Outfit',sans-serif;
-  color:var(--txt);
-  min-height:100vh;
-  padding:16px;
-  display:flex;
-  justify-content:center;
-}
+body{background:var(--ink);font-family:'Outfit',sans-serif;color:var(--txt);min-height:100vh;padding:16px;display:flex;justify-content:center}
+.smartphone-shell{width:100%;max-width:412px;background:#000;border-radius:40px;padding:12px;box-shadow:0 25px 60px rgba(0,0,0,0.8);border:2px solid #333}
+.screen{background:var(--ink);border-radius:32px;width:100%;height:100%;overflow-y:auto;padding:20px 16px}
 
-.smartphone-shell {
-  width: 100%;
-  max-width: 412px;
-  background: #000;
-  border-radius: 40px;
-  padding: 12px;
-  box-shadow: 0 25px 60px rgba(0,0,0,0.8), 0 0 0 4px #1a1a1a;
-  border: 2px solid #333;
-}
+/* Topbar */
+.topbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px}
+.brand{display:flex;align-items:center;gap:10px}
+.logo-icon{width:34px;height:34px;background:var(--card2);border:1.5px solid var(--gold-mid);border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Bebas Neue',sans-serif;font-size:14px;color:var(--gold-light)}
+.app-title{font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:1px;background:var(--gold-gradient);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
 
-.screen {
-  background: var(--ink);
-  border-radius: 32px;
-  width: 100%;
-  height: 100%;
-  overflow-y: auto;
-  padding: 20px 16px;
-  position: relative;
-}
+/* Consola de voz */
+.voice-panel{background:var(--card);border:1px solid rgba(212,175,55,0.2);border-radius:20px;padding:16px;margin-bottom:20px;text-align:center}
+.mic-btn{width:56px;height:56px;border-radius:50%;background:var(--gold-gradient);border:none;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;font-size:20px;color:var(--ink);box-shadow:0 0 15px rgba(212,175,55,0.4);margin-bottom:10px}
+.mic-btn.listening{background:linear-gradient(135deg,var(--red),#ff7693);box-shadow:0 0 20px rgba(255,71,114,0.5);animation:pulse 1.2s infinite}
+@keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.05)}}
+.transcript-area{font-size:12px;color:var(--muted);font-style:italic;min-height:32px;margin-bottom:12px;line-height:1.4}
 
-/* ── TOPBAR DE LA APP ── */
-.topbar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 20px;
-}
-.brand { display: flex; align-items: center; gap: 10px; }
-.logo-icon {
-  width: 34px;
-  height: 34px;
-  background: linear-gradient(135deg, var(--ink), var(--card2));
-  border: 1.5px solid var(--gold-mid);
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-family: 'Bebas Neue', sans-serif;
-  font-size: 14px;
-  color: var(--gold-light);
-  box-shadow: 0 0 10px rgba(212,175,55,0.2);
-}
-.app-title {
-  font-family: 'Bebas Neue', sans-serif;
-  font-size: 20px;
-  letter-spacing: 1px;
-  background: var(--gold-gradient);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-}
+.phone-field{display:flex;flex-direction:column;gap:4px;text-align:left}
+.phone-field label{font-family:'DM Mono',monospace;font-size:9px;color:var(--gold-light);text-transform:uppercase}
+.phone-field input{background:var(--card2);border:1px solid rgba(212,175,55,0.2);border-radius:8px;padding:8px 12px;color:var(--txt);width:100%}
 
-/* ── CONSOLA DE COMANDOS DE VOZ ── */
-.voice-panel {
-  background: var(--card);
-  border: 1px solid rgba(212,175,55,0.2);
-  border-radius: 20px;
-  padding: 16px;
-  margin-bottom: 20px;
-  text-align: center;
-  box-shadow: 0 8px 24px rgba(0,0,0,0.4);
-}
-.mic-btn {
-  width: 56px;
-  height: 56px;
-  border-radius: 50%;
-  background: var(--gold-gradient);
-  border: none;
-  cursor: pointer;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 20px;
-  color: var(--ink);
-  box-shadow: 0 0 15px rgba(212,175,55,0.4);
-  transition: all 0.2s;
-  margin-bottom: 10px;
-}
-.mic-btn.listening {
-  background: linear-gradient(135deg, var(--red), #ff7693);
-  box-shadow: 0 0 20px rgba(255,71,114,0.5);
-  animation: pulse 1.2s infinite;
-}
-@keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.05); } }
+/* Carrito vacío / dinámico */
+.items-container{display:flex;flex-direction:column;gap:12px;margin-bottom:20px}
+.empty-state{text-align:center;padding:30px 20px;color:var(--dim);font-size:13px;border:1px dashed rgba(255,255,255,0.05);border-radius:16px}
 
-.transcript-area {
-  font-size: 12px;
-  color: var(--muted);
-  font-style: italic;
-  min-height: 32px;
-  margin-bottom: 12px;
-  line-height: 1.4;
-}
-.phone-field {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  text-align: left;
-}
-.phone-field label {
-  font-family: 'DM Mono', monospace;
-  font-size: 9px;
-  color: var(--gold-light);
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
-.phone-field input {
-  background: var(--card2);
-  border: 1px solid rgba(212,175,55,0.2);
-  border-radius: 8px;
-  padding: 8px 12px;
-  color: var(--txt);
-  font-size: 13px;
-  width: 100%;
-}
-.phone-field input:focus { outline: none; border-color: var(--gold-mid); }
+.product-card{background:var(--card);border:1px solid rgba(212,175,55,0.25);border-radius:16px;padding:12px;display:flex;align-items:center;gap:12px}
+.prod-img-box{width:46px;height:46px;border-radius:50%;border:1.5px solid var(--gold-mid);display:flex;align-items:center;justify-content:center;background:#000;font-size:18px;flex-shrink:0}
+.prod-details{flex:1;min-width:0}
+.prod-name{font-size:13px;font-weight:600;color:#fff}
+.prod-qty-price{font-family:'DM Mono',monospace;font-size:11px;color:var(--muted);margin-top:2px}
+.prod-total{font-family:'DM Mono',monospace;font-size:13px;color:var(--gold-light);font-weight:600;margin-top:4px}
 
-/* ── UI DE PRODUCTOS ESTILO AYMAPOS PREMIUM ── */
-.items-container {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  margin-bottom: 24px;
-}
-.product-card {
-  background: var(--card);
-  border: 1px solid rgba(212,175,55,0.25);
-  border-radius: 16px;
-  padding: 12px;
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  position: relative;
-}
-.prod-img-box {
-  width: 54px;
-  height: 54px;
-  border-radius: 50%;
-  border: 1.5px solid var(--gold-mid);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: #000;
-  font-size: 22px;
-  flex-shrink: 0;
-}
-.prod-details { flex: 1; min-width: 0; }
-.prod-name { font-size: 14px; font-weight: 600; color: #fff; }
-.prod-sku { font-family: 'DM Mono', monospace; font-size: 10px; color: var(--dim); margin-top: 2px; }
-.prod-price { font-family: 'DM Mono', monospace; font-size: 13px; color: var(--gold-light); font-weight: 600; margin-top: 4px; }
+/* Total en pantalla */
+.total-display-box{background:var(--card2);border:1px solid var(--border);border-radius:14px;padding:14px;display:flex;justify-content:space-between;align-items:center;margin-bottom:20px}
+.total-lbl{font-family:'Bebas Neue',sans-serif;font-size:16px;letter-spacing:1px;color:var(--muted)}
+.total-val{font-family:'DM Mono',monospace;font-size:20px;font-weight:700;color:var(--green)}
 
-.qty-controls {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  background: rgba(255,255,255,0.02);
-  padding: 4px;
-  border-radius: 20px;
-}
-.qty-btn {
-  width: 24px;
-  height: 24px;
-  border-radius: 50%;
-  background: var(--gold-gradient);
-  border: none;
-  color: var(--ink);
-  font-weight: bold;
-  font-size: 14px;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
+.btn-pagar{width:100%;padding:14px;border-radius:14px;background:var(--gold-gradient);border:none;font-family:'Outfit',sans-serif;font-size:15px;font-weight:700;color:var(--ink);cursor:pointer;text-transform:uppercase;margin-bottom:10px}
+.btn-wa{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:12px;border-radius:12px;background:linear-gradient(135deg,var(--wa),var(--wa2));color:#fff;font-size:13px;font-weight:600;text-decoration:none}
 
-/* ── FOOTER ACTIONS ── */
-.btn-pagar {
-  width: 100%;
-  padding: 14px;
-  border-radius: 14px;
-  background: var(--gold-gradient);
-  border: none;
-  font-family: 'Outfit', sans-serif;
-  font-size: 15px;
-  font-weight: 700;
-  color: var(--ink);
-  cursor: pointer;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  box-shadow: 0 6px 20px rgba(212,175,55,0.25);
-  margin-bottom: 10px;
-}
-.btn-wa {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  width: 100%;
-  padding: 12px;
-  border-radius: 12px;
-  background: linear-gradient(135deg, var(--wa), var(--wa2));
-  color: #fff;
-  font-size: 13px;
-  font-weight: 600;
-  border: none;
-  cursor: pointer;
-  text-decoration: none;
-}
+/* Capa Ticket Oculta */
+#ticket-print-area{display:none;background:#fff;color:#000;padding:16px;font-family:'Courier New',Courier,monospace;font-size:12px;width:80mm}
+.t-center{text-align:center}.t-bold{font-weight:bold}.t-line{border-bottom:1px dashed #000;margin:8px 0}.t-grid{display:grid;grid-template-columns:35px 1fr 45px 55px;gap:4px}.t-right{text-align:right}
 
-/* ── MAQUETA TICKET TÉRMICO 80MM (Capa oculta para PDF/Impresión) ── */
-#ticket-print-area {
-  display: none;
-  background: #fff;
-  color: #000;
-  padding: 16px;
-  font-family: 'Courier New', Courier, monospace;
-  font-size: 12px;
-  line-height: 1.3;
-  width: 80mm;
-}
-.t-center { text-align: center; }
-.t-bold { font-weight: bold; }
-.t-line { border-bottom: 1px dashed #000; margin: 8px 0; }
-.t-grid { display: grid; grid-template-columns: 35px 1fr 45px 55px; gap: 4px; }
-.t-right { text-align: right; }
-
-@media print {
-  body { background: #fff !important; color: #000 !important; padding: 0 !important; margin: 0 !important; }
-  .smartphone-shell { display: none !important; }
-  #ticket-print-area { display: block !important; width: 80mm !important; }
+@media print{
+  body{background:#fff!important;color:#000!important;padding:0!important}
+  .smartphone-shell{display:none!important}
+  #ticket-print-area{display:block!important}
 }
 </style>
 </head>
@@ -278,186 +83,171 @@ body{
 <div class="smartphone-shell">
   <div class="screen">
     
-    <!-- TOPBAR -->
     <div class="topbar">
       <div class="brand">
-        <div class="logo-icon">A</div>
+        <div class="logo-icon">EK</div>
         <div>
-          <div class="app-title">AymaPOS Core</div>
-          <div class="b-sub" style="font-size:9px; color:var(--dim)">INVOICE IA INTERACTION</div>
+          <div class="app-title">AymaPOS · Voice Engine</div>
+          <div style="font-size:9px; color:var(--dim)">PRODUCTOS ECOLÓGICOS REALES</div>
         </div>
       </div>
-      <div style="font-family:'DM Mono',monospace; font-size:10px; color:var(--gold-light)">● ONLINE</div>
+      <div style="font-family:'DM Mono',monospace; font-size:10px; color:var(--gold-light)">● ECOKAIZEN</div>
     </div>
 
-    <!-- TERMINAL DE COMANDO POR VOZ -->
+    <!-- CONSOLA MÓVIL -->
     <div class="voice-panel">
-      <button class="mic-btn" id="mic-trigger" onclick="triggerVoiceCapture()">🔊</button>
-      <div id="mic-label" style="font-size:11px; font-weight:600; color:var(--gold-light)">Dictar venta por Voz</div>
-      <div class="transcript-area" id="transcript-txt">"Presione el micrófono para procesar cantidades de gaseosas o chocolates mediante IA..."</div>
+      <button class="mic-btn" id="mic-trigger" onclick="captureVoiceOrder()">🔊</button>
+      <div id="mic-label" style="font-size:11px; font-weight:600; color:var(--gold-light)">Presiona y dicta el pedido</div>
+      <div class="transcript-area" id="transcript-txt">"El carrito está vacío. Toca el micrófono y habla para que la IA arme la proforma en pantalla automáticamente..."</div>
       
       <div class="phone-field">
         <label>WhatsApp del Cliente</label>
-        <input type="tel" id="c-phone" value="51949546919" placeholder="Ej: 51949546919" oninput="updateWhatsAppLink()">
+        <input type="tel" id="c-phone" value="51949546919" oninput="updateWhatsAppContent()">
       </div>
     </div>
 
-    <div style="font-family:'DM Mono',monospace; font-size:10px; color:var(--muted); margin-bottom:10px; text-transform:uppercase; letter-spacing:1px">Carrito de Compra Activo</div>
+    <div style="font-family:'DM Mono',monospace; font-size:10px; color:var(--gold-light); margin-bottom:10px; text-transform:uppercase">CARRITO DE COMPRA ACTIVO</div>
 
-    <!-- UI DE PRODUCTOS (Copiado exacto de tu interfaz) -->
-    <div class="items-container">
-      <div class="product-card">
-        <div class="prod-img-box">🥤</div>
-        <div class="prod-details">
-          <div class="prod-name">Gaseosa Cola</div>
-          <div class="prod-sku">SKU-1929791</div>
-          <div class="prod-price">S/ 2.50</div>
-        </div>
-        <div class="qty-controls">
-          <button class="qty-btn" onclick="alterQty('cola', -1)">-</button>
-          <span style="font-family:'DM Mono',monospace; font-size:13px; width:16px; text-align:center" id="qty-cola">1</span>
-          <button class="qty-btn" onclick="alterQty('cola', 1)">+</button>
-        </div>
-      </div>
-
-      <div class="product-card">
-        <div class="prod-img-box">🍫</div>
-        <div class="prod-details">
-          <div class="prod-name">Chocolate King</div>
-          <div class="prod-sku">SKU-7929799</div>
-          <div class="prod-price">S/ 7.50</div>
-        </div>
-        <div class="qty-controls">
-          <button class="qty-btn" onclick="alterQty('king', -1)">-</button>
-          <span style="font-family:'DM Mono',monospace; font-size:13px; width:16px; text-align:center" id="qty-king">1</span>
-          <button class="qty-btn" onclick="alterQty('king', 1)">+</button>
-        </div>
-      </div>
-
-      <div class="product-card">
-        <div class="prod-img-box">🍪</div>
-        <div class="prod-details">
-          <div class="prod-name">Gaseosa Golng</div>
-          <div class="prod-sku">SKU-7929792</div>
-          <div class="prod-price">S/ 7.70</div>
-        </div>
-        <div class="qty-controls">
-          <button class="qty-btn" onclick="alterQty('golng', -1)">-</button>
-          <span style="font-family:'DM Mono',monospace; font-size:13px; width:16px; text-align:center" id="qty-golng">1</span>
-          <button class="qty-btn" onclick="alterQty('golng', 1)">+</button>
-        </div>
-      </div>
+    <!-- CONTENEDOR DINÁMICO DE PRODUCTOS -->
+    <div class="items-container" id="cart-wrapper">
+      <div class="empty-state" id="empty-msg">No hay productos en el pedido. Use el comando de voz.</div>
     </div>
 
-    <!-- ACCIONES DE FACTURACIÓN -->
-    <button class="btn-pagar" onclick="window.print()">PAGAR & IMPRIMIR 🖨️</button>
-    <a href="#" id="wa-send-link" target="_blank" class="btn-wa" onclick="executePdfDownload()">
+    <!-- MONTO TOTAL VISIBLE EN PANTALLA -->
+    <div class="total-display-box">
+      <span class="total-lbl">TOTAL CALCULADO</span>
+      <span class="total-val" id="screen-total">S/ 0.00</span>
+    </div>
+
+    <button class="btn-pagar" onclick="window.print()">Imprimir Ticket 80mm 🖨️</button>
+    <a href="#" id="wa-send-link" target="_blank" class="btn-wa" onclick="generatePdfFile()">
       💬 ENVIAR COMPROBANTE PDF POR WHATSAPP
     </a>
 
   </div>
 </div>
 
-<!-- CAPA TÉRMICA ESTRUCTURADA 80MM PARA IMPRESIÓN Y PDF -->
+<!-- COMPROBANTE FÍSICO 80MM -->
 <div id="ticket-print-area">
   <div class="t-center t-bold" style="font-size:14px;">ECOKAIZEN E.I.R.L.</div>
   <div class="t-center">RUC: 20603793430</div>
   <div class="t-center">Manuel Pardo 548 - Chiclayo</div>
   <div class="t-line"></div>
-  <div class="t-center t-bold">NOTA DE VENTA / PROFORMA</div>
-  <div class="t-center t-bold" id="ticket-serial">N° PRO-002649</div>
+  <div class="t-center t-bold">PROFORMA / NOTA DE VENTA</div>
+  <div class="t-center t-bold">N° PRO-002685</div>
   <div class="t-line"></div>
-  <div>FECHA: <span id="t-fecha">01/06/2026</span></div>
-  <div>CLIENTE: <span class="t-bold">Consumidor Final</span></div>
+  <div>FECHA: <span id="t-fecha">--/--/----</span></div>
+  <div>CLIENTE: <span class="t-bold" id="t-client-name">Cliente Registrado</span></div>
   <div class="t-line"></div>
   <div class="t-grid t-bold">
     <div>CANT</div><div>DESCRIPCION</div><div class="t-right">P.U.</div><div class="t-right">TOTAL</div>
   </div>
   <div class="t-line"></div>
-  <div id="print-dynamic-items">
-    <!-- Cargado dinámicamente según stock e interfaz -->
-  </div>
+  <div id="print-items-area"></div>
   <div class="t-line"></div>
   <div style="display:flex; justify-content:space-between; font-weight:bold;">
-    <span>TOTAL BRUTO:</span>
-    <span id="p-total">S/ 17.70</span>
+    <span>TOTAL NETO A PAGAR:</span>
+    <span id="t-total">S/ 0.00</span>
   </div>
   <div class="t-line"></div>
   <div class="t-center" style="font-size:10px;">*** Documento de Control Interno ***</div>
-  <div class="t-center" style="font-size:10px;">AymaPOS Engine AI</div>
+  <div class="t-center" style="font-size:10px;">Despacho de Materiales Ecológicos</div>
 </div>
 
 <script>
-// Inventario y estado del carrito
-const precios = { cola: 2.50, king: 7.50, golng: 7.70 };
-const nombres = { cola: "Gaseosa Cola", king: "Chocolate King", golng: "Gaseosa Golng" };
-let carrito = { cola: 1, king: 1, golng: 1 };
+// Diccionario Real de Precios de EcoKaizen para la simulación estructurada de la IA
+const DB_PRODUCTOS = {
+  vaso8:  { nombre: "Vaso de Papel 8oz (Ecológico)", pu: 0.18, icon: "🥤" },
+  vaso12: { nombre: "Vaso de Papel 12oz (Ecológico)", pu: 0.25, icon: "🥤" },
+  plato:  { nombre: "Plato de Caña de Azúcar", pu: 0.35, icon: "🍽️" },
+  bowl:   { nombre: "Bowl de Papel Kraft 12oz", pu: 0.45, icon: "🥣" },
+  bolsa:  { nombre: "Bolsa de Material PET Sostenible", pu: 0.60, icon: "🛍️" }
+};
 
-function alterQty(item, delta) {
-  carrito[item] = Math.max(0, carrito[item] + delta);
-  document.getElementById(`qty-${item}`).innerText = carrito[item];
-  calculateTotals();
-}
+let currentOrder = [];
 
-function calculateTotals() {
-  let total = 0;
-  const printContainer = document.getElementById('print-dynamic-items');
-  printContainer.innerHTML = "";
-
-  for (let item in carrito) {
-    if (carrito[item] > 0) {
-      let subtotal = carrito[item] * precios[item];
-      total += subtotal;
-
-      // Inyección en la estructura de la ticketera térmica de 80mm
-      const row = document.createElement('div');
-      row.className = 't-grid';
-      row.innerHTML = `<div>${carrito[item]}</div><div>${nombres[item]}</div><div class="t-right">${precios[item].toFixed(2)}</div><div class="t-right">${subtotal.toFixed(2)}</div>`;
-      printContainer.appendChild(row);
-    }
-  }
-
-  document.getElementById('p-total').innerText = 'S/ ' + total.toFixed(2);
-  updateWhatsAppLink();
-}
-
-function triggerVoiceCapture() {
+function captureVoiceOrder() {
   const btn = document.getElementById('mic-trigger');
   const lbl = document.getElementById('mic-label');
   
   btn.className = "mic-btn listening";
-  lbl.innerText = "Escuchando flujo de voz...";
-  document.getElementById('transcript-txt').innerText = "Procesando audio por redes multimodales...";
+  lbl.innerText = "Escuchando audio en vivo...";
+  document.getElementById('transcript-txt').innerText = "Gemini AI interpretando empaques y volúmenes...";
 
-  // Simulación del callback de la API de Gemini estructurando la orden en caliente
+  // Simulación: La IA de Gemini escucha el audio y genera el JSON estructurado con los productos reales
   setTimeout(() => {
     btn.className = "mic-btn";
     lbl.innerText = "Dictar venta por Voz";
-    document.getElementById('transcript-txt').innerText = '"IA: Se detectó actualización: 3 Gaseosas Cola, 2 Chocolates King y 1 Gaseosa Golng."';
+    document.getElementById('transcript-txt').innerText = '"Carlos solicitó 500 vasos de papel de 8oz, 300 platos de caña de azúcar y 200 bolsas de material PET para Trujillo..."';
     
-    carrito.cola = 3;
-    carrito.king = 2;
-    carrito.golng = 1;
+    // JSON real devuelto por la IA
+    currentOrder = [
+      { id: 'vaso8', cant: 500 },
+      { id: 'plato', cant: 300 },
+      { id: 'bolsa', cant: 200 }
+    ];
     
-    document.getElementById('qty-cola').innerText = 3;
-    document.getElementById('qty-king').innerText = 2;
-    document.getElementById('qty-golng').innerText = 1;
-    
-    calculateTotals();
+    renderActiveCart();
   }, 2500);
 }
 
-function executePdfDownload() {
+function renderActiveCart() {
+  const cartContainer = document.getElementById('cart-wrapper');
+  const printContainer = document.getElementById('print-items-area');
+  
+  cartContainer.innerHTML = "";
+  printContainer.innerHTML = "";
+  
+  if(currentOrder.length === 0) {
+    document.getElementById('empty-msg').style.display = "block";
+    document.getElementById('screen-total').innerText = "S/ 0.00";
+    document.getElementById('t-total').innerText = "S/ 0.00";
+    return;
+  }
+  
+  let totalAcumulado = 0;
+
+  currentOrder.forEach(item => {
+    const prodInfo = DB_PRODUCTOS[item.id];
+    const subtotal = item.cant * prodInfo.pu;
+    totalAcumulado += subtotal;
+
+    // 1. Mostrar de forma dinámica en la pantalla del celular
+    const card = document.createElement('div');
+    card.className = 'product-card';
+    card.innerHTML = `
+      <div class="prod-img-box">${prodInfo.icon}</div>
+      <div class="prod-details">
+        <div class="prod-name">${prodInfo.nombre}</div>
+        <div class="prod-qty-price">${item.cant} und. x S/ ${prodInfo.pu.toFixed(2)}</div>
+        <div class="prod-total">Subtotal: S/ ${subtotal.toFixed(2)}</div>
+      </div>
+    `;
+    cartContainer.appendChild(card);
+
+    // 2. Inyectar al mismo tiempo en el formato de impresión térmica de 80mm
+    const printRow = document.createElement('div');
+    printRow.className = 't-grid';
+    printRow.innerHTML = `<div>${item.cant}</div><div>${prodInfo.nombre}</div><div class="t-right">${prodInfo.pu.toFixed(2)}</div><div class="t-right">${subtotal.toFixed(2)}</div>`;
+    printContainer.appendChild(printRow);
+  });
+
+  // Mostrar el monto total en la pantalla y en el ticket
+  document.getElementById('screen-total').innerText = 'S/ ' + totalAcumulado.toFixed(2);
+  document.getElementById('t-total').innerText = 'S/ ' + totalAcumulado.toFixed(2);
+  updateWhatsAppContent();
+}
+
+function generatePdfFile() {
   const element = document.getElementById('ticket-print-area');
-  // Forzar visualización temporal para que la librería html2pdf renderice el canvas correctamente
   element.style.display = 'block';
   
   const opt = {
-    margin:       0,
-    filename:     'Nota_Venta_AymaPOS.pdf',
-    image:        { type: 'jpeg', quality: 0.98 },
-    html2canvas:  { scale: 3, letterRendering: true },
-    jsPDF:        { unit: 'mm', format: [80, 160], orientation: 'portrait' }
+    margin: 0,
+    filename: 'Proforma_EcoKaizen.pdf',
+    image: { type: 'jpeg', quality: 0.98 },
+    html2canvas: { scale: 3, letterRendering: true },
+    jsPDF: { unit: 'mm', format: [80, 160], orientation: 'portrait' }
   };
   
   html2pdf().set(opt).from(element).save().then(() => {
@@ -465,14 +255,12 @@ function executePdfDownload() {
   });
 }
 
-function updateWhatsAppLink() {
+function updateWhatsAppContent() {
   const phone = document.getElementById('c-phone').value.trim() || '51949546919';
-  const total = document.getElementById('p-total').innerText;
+  const total = document.getElementById('screen-total').innerText;
+  const pdfCloudLink = window.location.href.split('?')[0] + "_comprobante.pdf";
   
-  // Enlace simulado de la nube donde se aloja el reporte del cliente
-  const pdfCloudLink = window.location.href.split('?')[0] + "_pedido.pdf";
-  
-  const msg = `*AYMAPOS · INVOICE IA* 🧾\n_EcoKaizen Control Interno_\n\n*NOTA DE VENTA / PROFORMA*\n----------------------------------------\n*Fecha de Emisión:* 01/06/2026\n*Total General:* ${total}\n----------------------------------------\n\n📄 *Descargar Comprobante PDF oficial de 80mm:*\n${pdfCloudLink}\n\n_Gracias por su preferencia._`;
+  const msg = `*ECOKAIZEN E.I.R.L.* 🏢\n_Distribución de Empaques Ecológicos_\n\n*PROFORMA / NOTA DE CONTROL*\n----------------------------------------\n*Monto Total:* ${total}\n*Estado:* Procesado por Voz (AymaPOS)\n----------------------------------------\n\n📄 *Descargar Proforma PDF de 80mm:*\n${pdfCloudLink}`;
   
   document.getElementById('wa-send-link').href = 'https://api.whatsapp.com/send?phone=' + phone + '&text=' + encodeURIComponent(msg);
 }
@@ -480,7 +268,7 @@ function updateWhatsAppLink() {
 window.onload = () => {
   const d = new Date();
   document.getElementById('t-fecha').innerText = String(d.getDate()).padStart(2,'0') + '/' + String(d.getMonth()+1).padStart(2,'0') + '/' + d.getFullYear();
-  calculateTotals();
+  updateWhatsAppContent();
 };
 </script>
 </body>
