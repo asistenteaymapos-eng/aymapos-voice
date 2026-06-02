@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-<title>AymaPOS Core · ECOKAIZEN Strict</title>
+<title>AymaPOS Core · ECOKAIZEN Strict Audio</title>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:wght=400;500;700&family=Outfit:wght=300;400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
@@ -27,11 +27,11 @@ body{background:var(--ink);font-family:'Outfit',sans-serif;color:var(--txt);min-
 .btn-clear-all{background:transparent;border:1px solid var(--red);color:var(--red);padding:4px 8px;border-radius:6px;font-size:11px;font-weight:600;cursor:pointer}
 .items-container{display:flex;flex-direction:column;gap:12px;margin-bottom:20px}
 .empty-state{text-align:center;padding:30px 20px;color:var(--dim);font-size:13px;border:1px dashed rgba(255,255,255,0.05);border-radius:16px}
-.product-card{background:var(--card);border:1px solid rgba(212,175,55,0.25);border-radius:16px;padding:12px;display:flex;flex-direction:column;gap:6px;position:relative}
+.product-card{background:var(--card);border:1px solid rgba(212,175,55,0.25);border-radius:16px;padding:12px;display:flex;flex-direction:column;gap:4px;position:relative}
 .editable-name-input{background:transparent;border:none;border-bottom:1px dashed var(--dim);color:#fff;font-size:14px;font-weight:700;width:90%;text-transform:uppercase;padding:2px 0}
 .editable-name-input:focus{border-bottom:1px solid var(--gold-mid);outline:none}
 .prod-details-row{display:flex;align-items:center;justify-content:space-between;background:var(--card2);padding:6px 10px;border-radius:8px;margin-top:4px}
-.inputs-grp{display:flex;align-items:center;gap:4px;font-size:11px;color:var(--muted);font-family:'Outfit',sans-serif}
+.inputs-grp{display:flex;align-items:center;gap:4px;font-size:11px;color:var(--muted)}
 .input-cell{background:var(--ink);border:1px solid var(--border);color:#fff;font-family:'DM Mono',monospace;font-size:12px;padding:4px;border-radius:6px;text-align:center}
 .btn-delete-item{background:transparent;border:none;color:var(--red);font-size:16px;cursor:pointer;padding:8px;position:absolute;right:4px;top:8px}
 .total-display-box{background:var(--card2);border:1px solid var(--border);border-radius:14px;padding:14px;display:flex;justify-content:space-between;align-items:center;margin-bottom:20px}
@@ -50,14 +50,14 @@ body{background:var(--ink);font-family:'Outfit',sans-serif;color:var(--txt);min-
     <div class="voice-panel">
       <button class="mic-btn" id="mic-trigger" onclick="toggleVoiceRecognition()">🔊</button>
       <div id="mic-label" style="font-size:11px; font-weight:600; color:var(--gold-light)">Presionar y dictar despacho</div>
-      <div class="transcript-area" id="transcript-txt">"Dicta el pedido de forma libre. Abajo puedes corregir el nombre o precio tocando la celda..."</div>
+      <div class="transcript-area" id="transcript-txt">"Dicta libre. El último número siempre se asignará al precio..."</div>
     </div>
     <div class="section-header">
       <div style="font-family:'DM Mono',monospace; font-size:10px; color:var(--gold-light); text-transform:uppercase">Estructura de Comprobante</div>
       <button class="btn-clear-all" id="clear-all-btn" style="display:none;" onclick="clearEntireCart()">🗑️ Vaciar Todo</button>
     </div>
     <div class="items-container" id="cart-wrapper">
-      <div class="empty-state">Esperando dictado de almacén. Todo es editable en vivo.</div>
+      <div class="empty-state">Esperando dictado de almacén...</div>
     </div>
     <div class="total-display-box"><span class="total-lbl">TOTAL NETO</span><span class="total-val" id="screen-total">S/ 0.00</span></div>
     <button class="btn-pagar" onclick="window.print()">Imprimir Ticket 80mm 🖨️</button>
@@ -75,77 +75,64 @@ if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
   recognition.onresult = (event) => {
     const textResult = event.results[0][0].transcript.toLowerCase();
     document.getElementById('transcript-txt').innerText = `Escuché: "${event.results[0][0].transcript}"`;
-    parseProductionVoiceRigorous(textResult);
+    parseAudioLoudAndClear(textResult);
   };
 }
 
 function toggleVoiceRecognition() { if (!recognition) return; isListening ? recognition.stop() : recognition.start(); }
 function stopMicUI() { isListening = false; document.getElementById('mic-trigger').className = "mic-btn"; }
 
-function parseProductionVoiceRigorous(text) {
-  let cleanedText = text.replace(/puntos|punto/g, '.').replace(/osé|osea|ósea|esperate|hasta/g, '').trim();
-  const numbers = cleanedText.match(/\d+(\.\d+)?/g) ? cleanedText.match(/\d+(\.\d+)?/g).map(Number) : [];
+function parseAudioLoudAndClear(text) {
+  // Limpiar palabras de control molestas
+  let cleaned = text.replace(/escuchar|el numero|el número|hasta|ósea|osea/g, '').trim();
   
-  let detectedType = "";
-  let detectedModel = "";
-  let detectedUnit = "1 Paquete";
-  let detectedPrice = 0.00;
+  // Buscar todos los números
+  const numbers = cleaned.match(/\d+(\.\d+)?/g) ? cleaned.match(/\d+(\.\d+)?/g).map(Number) : [];
+  
+  let pName = "PRODUCTO GENERAL";
+  let pUnit = "1 Paquete";
+  let pPrice = 0.00;
 
-  // 1. Identificación estricta de palabras clave de tu catálogo real
-  if (cleanedText.includes("vaso") || cleanedText.includes("bazo")) detectedType = "VASO";
-  else if (cleanedText.includes("plato") || cleanedText.includes("plata")) detectedType = "PLATO DE CAÑA";
-  else if (cleanedText.includes("deli") || cleanedText.includes("litro")) detectedType = "DELI 1 LITRO";
-  else if (cleanedText.includes("bolsa") || cleanedText.includes("pet")) detectedType = "BOLSA PET";
-  else if (cleanedText.includes("cuchara") || cleanedText.includes("cucharas")) detectedType = "CUCHARA";
-  else if (cleanedText.includes("bandeja") || cleanedText.includes("bandejas")) detectedType = "BANDEJA PV";
+  // 1. Identificar tipo de producto básico
+  if (cleaned.includes("deli") || cleaned.includes("litro")) pName = "DELI 1 LITRO";
+  else if (cleaned.includes("plato") || cleaned.includes("plata")) pName = "PLATO DE CAÑA";
+  else if (cleaned.includes("vaso")) pName = "VASO";
+  else if (cleaned.includes("bolsa") || cleaned.includes("pet")) pName = "BOLSA PET";
+  else if (cleaned.includes("cuchara")) pName = "CUCHARA";
+  else if (cleaned.includes("bandeja")) pName = "BANDEJA";
+  else if (cleaned.includes("cochera")) pName = "COCHERA";
 
-  // 2. Extraer el número del modelo de forma aislada
-  // Buscamos si hay un número pegado a palabras clave o al inicio
-  const modelMatch = cleanedText.match(/(?:número|numero|nro|n°|vaso|plato|bolsa|cuchara|bandeja)\s*(\d+)/);
-  if (modelMatch) {
-    detectedModel = " #" + modelMatch[1];
-  } else if (numbers.length > 0 && detectedType !== "DELI 1 LITRO") {
-    // Si la frase contiene números y no es el Deli de litro, el primer número es el modelo
-    detectedModel = " #" + numbers[0];
+  // Agregar número de modelo si existe un primer número
+  if (numbers.length > 0 && pName !== "DELI 1 LITRO" && pName !== "COCHERA") {
+    pName += " #" + numbers[0];
+  } else if (numbers.length > 0 && pName === "COCHERA") {
+    pName += " N° " + numbers[0];
   }
 
-  // Si la IA no encontró ninguna palabra conocida, te deja el nombre libre completo para que no se pierda la información
-  let finalName = detectedType ? `${detectedType}${detectedModel}` : text.toUpperCase();
+  // 2. Extraer unidad de medida mayorista
+  if (cleaned.includes("cuarto")) pUnit = "1/4 Ciento";
+  else if (cleaned.includes("medio ciento")) pUnit = "1/2 Ciento";
+  else if (cleaned.includes("ciento")) pUnit = "1 Ciento";
+  else if (cleaned.includes("millar")) pUnit = "1 Millar";
+  else if (cleaned.includes("docena")) pUnit = "1 Docena";
+  else if (cleaned.includes("caja")) pUnit = "1 Caja";
 
-  // 3. Capturar unidades de volumen mayoristas
-  if (cleanedText.includes("un cuarto") || cleanedText.includes("cuarto")) detectedUnit = "1/4 Ciento";
-  else if (cleanedText.includes("medio ciento")) detectedUnit = "1/2 Ciento";
-  else if (cleanedText.includes("ciento")) detectedUnit = "1 Ciento";
-  else if (cleanedText.includes("millar")) detectedUnit = "1 Millar";
-  else if (cleanedText.includes("docena")) detectedUnit = "1 Docena";
-  else if (cleanedText.includes("caja")) detectedUnit = "1 Caja";
-  else {
-    // Si dices un número intermedio (ej: "2 paquete"), lo extraemos para la cantidad
-    const packageMatch = cleanedText.match(/(\d+)\s*paquete/);
-    if (packageMatch) {
-      detectedUnit = `${packageMatch[1]} Paquetes`;
-    } else if (text.includes("paquete")) {
-      detectedUnit = "1 Paquete";
-    }
-  }
-
-  // 4. Extraer el Precio Final (Buscamos el último número decimal o entero asociado a soles)
+  // 3. Asignar el precio de forma estricta: Siempre el ÚLTIMO número de la frase dictada
   if (numbers.length > 0) {
-    // El precio de venta pactado siempre es el último número de la frase dictada
-    detectedPrice = numbers[numbers.length - 1];
+    pPrice = numbers[numbers.length - 1];
   }
   
-  // Protección: Si solo hay un número en toda la frase y ya lo usamos como modelo, el precio base es 0
-  if (numbers.length === 1 && detectedModel.includes(String(numbers[0]))) {
-    detectedPrice = 0.00;
+  // Si solo hay un número en la frase y se usó como modelo, el precio por defecto es el mismo número o cero
+  if (numbers.length === 1 && cleaned.includes("soles")) {
+    pPrice = numbers[0];
   }
 
-  cart.push({
-    name: finalName,
-    unit: detectedUnit,
-    price: Number(detectedPrice)
-  });
+  // Si no se detectó ninguna palabra clave conocida, usamos el texto literal limpio como nombre
+  if (pName === "PRODUCTO GENERAL") {
+    pName = cleaned.toUpperCase();
+  }
 
+  cart.push({ name: pName, unit: pUnit, price: Number(pPrice) });
   renderCartUI();
 }
 
