@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-<title>AymaPOS Core · ECOKAIZEN Engine</title>
+<title>AymaPOS Core · ECOKAIZEN Universal</title>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:wght=400;500;700&family=Outfit:wght=300;400;500;600;700;800&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 <style>
@@ -39,7 +39,7 @@ body{background:var(--ink);font-family:'Outfit',sans-serif;color:var(--txt);min-
 .prod-details{flex:1;min-width:0;padding-right:30px}
 .prod-name{font-size:13px;font-weight:600;color:#fff;text-transform:uppercase}
 .prod-qty-price{display:flex;align-items:center;gap:6px;font-family:'DM Mono',monospace;font-size:12px;color:var(--muted);margin-top:4px}
-.price-input-box{background:var(--card2);border:1px solid var(--border);color:var(--green);font-weight:700;font-family:'DM Mono',monospace;font-size:12px;padding:2px 6px;border-radius:6px;width:70px;text-align:right}
+.price-input-box{background:var(--card2);border:1px solid var(--border);color:var(--green);font-weight:700;font-family:'DM Mono',monospace;font-size:12px;padding:2px 6px;border-radius:6px;width:80px;text-align:right}
 .btn-delete-item{background:transparent;border:none;color:var(--red);font-size:16px;cursor:pointer;padding:8px;position:absolute;right:6px;top:50%;transform:translateY(-50%)}
 .total-display-box{background:var(--card2);border:1px solid var(--border);border-radius:14px;padding:14px;display:flex;justify-content:space-between;align-items:center;margin-bottom:20px}
 .total-lbl{font-family:'Bebas Neue',sans-serif;font-size:16px;letter-spacing:1px;color:var(--muted)}
@@ -47,7 +47,7 @@ body{background:var(--ink);font-family:'Outfit',sans-serif;color:var(--txt);min-
 .btn-pagar{width:100%;padding:14px;border-radius:14px;background:var(--gold-gradient);border:none;font-family:'Outfit',sans-serif;font-size:15px;font-weight:700;color:var(--ink);cursor:pointer;text-transform:uppercase;margin-bottom:10px}
 .btn-wa{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:12px;border-radius:12px;background:linear-gradient(135deg,var(--wa),var(--wa2));color:#fff;font-size:13px;font-weight:600;text-decoration:none}
 #ticket-print-area{display:none;background:#fff;color:#000;padding:16px;font-family:'Courier New',Courier,monospace;font-size:12px;width:80mm}
-.t-center{text-align:center}.t-bold{font-weight:bold}.t-line{border-bottom:1px dashed #000;margin:8px 0}.t-grid{display:grid;grid-template-columns:1fr 60px;gap:4px}.t-right{text-align:right}
+.t-center{text-align:center}.t-bold{font-weight:bold}.t-line{border-bottom:1px dashed #000;margin:8px 0}.t-grid{display:grid;grid-template-columns:1fr 70px;gap:4px}.t-right{text-align:right}
 @media print{
   body{background:#fff!important;color:#000!important;padding:0!important}
   .smartphone-shell{display:none!important}
@@ -61,16 +61,16 @@ body{background:var(--ink);font-family:'Outfit',sans-serif;color:var(--txt);min-
     <div class="topbar">
       <div class="brand"><div class="logo-icon">EK</div>
         <div>
-          <div class="app-title">AymaPOS Engine</div>
-          <div style="font-size:9px; color:var(--dim)">PRODUCCIÓN · RECONOCIMIENTO ESTRICTO</div>
+          <div class="app-title">AymaPOS Universal</div>
+          <div style="font-size:9px; color:var(--dim)">RECONOCIMIENTO LIBRE TOTAL</div>
         </div>
       </div>
       <div style="font-family:'DM Mono',monospace; font-size:10px; color:var(--gold-light)">● ECOKAIZEN</div>
     </div>
     <div class="voice-panel">
       <button class="mic-btn" id="mic-trigger" onclick="toggleVoiceRecognition()">🔊</button>
-      <div id="mic-label" style="font-size:11px; font-weight:600; color:var(--gold-light)">Presionar y dictar pedido</div>
-      <div class="transcript-area" id="transcript-txt">"Dicta claro: 'vaso número 12, 4 soles de paquete'..."</div>
+      <div id="mic-label" style="font-size:11px; font-weight:600; color:var(--gold-light)">Presionar y dictar cualquier producto</div>
+      <div class="transcript-area" id="transcript-txt">"Dicta libre: 'arroz', 'polos', 'sandalias', o tu empaque real..."</div>
       <div class="phone-field">
         <label>WhatsApp del Cliente</label>
         <input type="tel" id="c-phone" value="51949546919" oninput="updateWhatsAppContent()">
@@ -81,7 +81,7 @@ body{background:var(--ink);font-family:'Outfit',sans-serif;color:var(--txt);min-
       <button class="btn-clear-all" id="clear-all-btn" style="display:none;" onclick="clearEntireCart()">🗑️ Vaciar Todo</button>
     </div>
     <div class="items-container" id="cart-wrapper">
-      <div class="empty-state" id="empty-msg">Esperando dictado exacto de almacén. Precios editables en vivo.</div>
+      <div class="empty-state" id="empty-msg">Base abierta. Todo lo que dictes aparecerá aquí al instante.</div>
     </div>
     <div class="total-display-box"><span class="total-lbl">TOTAL A COBRAR</span><span class="total-val" id="screen-total">S/ 0.00</span></div>
     <button class="btn-pagar" onclick="window.print()">Imprimir Ticket 80mm 🖨️</button>
@@ -91,19 +91,12 @@ body{background:var(--ink);font-family:'Outfit',sans-serif;color:var(--txt);min-
 <div id="ticket-print-area">
   <div class="t-center t-bold" style="font-size:14px;">ECOKAIZEN E.I.R.L.</div>
   <div class="t-center">RUC: 20603793430</div>
-  <div class="t-center">Manuel Pardo 548 - Chiclayo</div>
   <div class="t-line"></div>
-  <div class="t-center t-bold">PROFORMA / NOTA DE DISTRIBUCIÓN</div>
-  <div class="t-line"></div>
-  <div>FECHA: <span id="t-fecha">--/--/----</span></div>
-  <div class="t-line"></div>
-  <div class="t-grid t-bold"><div>DESCRIPCION</div><div class="t-right">TOTAL</div></div>
+  <div class="t-center t-bold">PROFORMA DE DESPACHO LIBRE</div>
   <div class="t-line"></div>
   <div id="print-items-area"></div>
   <div class="t-line"></div>
-  <div style="display:flex; justify-content:space-between; font-weight:bold;"><span>TOTAL NETO A COBRAR:</span><span id="t-total">S/ 0.00</span></div>
-  <div class="t-line"></div>
-  <div class="t-center" style="font-size:10px;">*** Control Interno de Despacho ***</div>
+  <div style="display:flex; justify-content:space-between; font-weight:bold;"><span>TOTAL NETO:</span><span id="t-total">S/ 0.00</span></div>
 </div>
 <script>
 let cart = []; let recognition; let isListening = false;
@@ -116,79 +109,74 @@ if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
   recognition.onresult = (event) => {
     const textResult = event.results[0][0].transcript.toLowerCase();
     document.getElementById('transcript-txt').innerText = `Escuché: "${event.results[0][0].transcript}"`;
-    processProductionVoice(textResult);
+    processUniversalVoice(textResult);
   };
 }
 
 function toggleVoiceRecognition() { if (!recognition) return; isListening ? recognition.stop() : recognition.start(); }
-function stopMicUI() { isListening = false; document.getElementById('mic-trigger').className = "mic-btn"; document.getElementById('mic-label').innerText = "Presionar y dictar pedido"; }
+function stopMicUI() { isListening = false; document.getElementById('mic-trigger').className = "mic-btn"; document.getElementById('mic-label').innerText = "Presionar y dictar cualquier producto"; }
 
-// PARSER CON FILTRADO LINEAL DE ENTIDADES PARA EVITAR COLISIONES
-function processProductionVoice(text) {
-  // Encontrar todos los números de manera secuencial
-  const matchedNumbers = text.match(/\d+/g) ? text.match(/\d+/g).map(Number) : [];
+// ALGORITMO GOOGLE DE CAPTURA TOTAL ABIERTA
+function processUniversalVoice(text) {
+  // Extraer números de la frase
+  const numbers = text.match(/\d+/g) ? text.match(/\d+/g).map(Number) : [];
   
-  let itemType = "PRODUCTO";
-  let itemIcon = "📦";
-  let itemModel = "";
-  let itemQuantityLabel = "1 Lote";
-  let itemPrice = 0;
+  let detectedUnit = "1 Lote";
+  let finalPrice = 10.00; // Precio base de cortesía por si no dictas precio
+  
+  // Capturar unidades de medida comerciales peruanas
+  if (text.includes("paquete")) detectedUnit = "1 Paquete";
+  else if (text.includes("un cuarto") || text.includes("cuarto")) detectedUnit = "1/4 Ciento";
+  else if (text.includes("medio ciento")) detectedUnit = "1/2 Ciento";
+  else if (text.includes("ciento")) detectedUnit = "1 Ciento";
+  else if (text.includes("millar")) detectedUnit = "1 Millar";
+  else if (text.includes("docena")) detectedUnit = "1 Docena";
+  else if (text.includes("caja")) detectedUnit = "1 Caja";
 
-  // 1. Clasificación estricta de palabras clave
-  if (text.includes("vaso") || text.includes("bazo")) {
-    itemType = "VASO DE PAPEL"; itemIcon = "🥤";
-  } else if (text.includes("plato") || text.includes("plata")) {
-    itemType = "PLATO DE CAÑA"; itemIcon = "🍽️";
-  } else if (text.includes("bolsa") || text.includes("pet")) {
-    itemType = "BOLSA PET"; itemIcon = "🛍️";
-  } else if (text.includes("deli") || text.includes("litro")) {
-    itemType = "ENVASE DELI"; itemIcon = "📦";
-  }
-
-  // 2. Extraer Modelo (si viene inmediatamente después de "número" o "nro")
-  const modelRegex = /(?:número|numero|nro|n°)\s*(\d+)/;
-  const modelMatch = text.match(modelRegex);
-  if (modelMatch) {
-    itemModel = " N° " + modelMatch[1];
-  } else if (matchedNumbers.length > 0 && (text.startsWith("vaso") || text.startsWith("plato") || text.startsWith("bolsa"))) {
-    // Si la frase arranca con el producto y un número (ej: "vaso 12...") tomamos el primer número como modelo
-    itemModel = " N° " + matchedNumbers[0];
-  }
-
-  // 3. Determinar la Unidad de Medida del empaque
-  if (text.includes("paquete")) {
-    itemQuantityLabel = "1 Paquete";
-  } else if (text.includes("un cuarto") || text.includes("cuarto")) {
-    itemQuantityLabel = "1/4 Ciento (25 und)";
-  } else if (text.includes("medio ciento") || text.includes("medio")) {
-    itemQuantityLabel = "1/2 Ciento (50 und)";
-  } else if (text.includes("ciento")) {
-    itemQuantityLabel = "1 Ciento (100 und)";
-  } else if (text.includes("millar")) {
-    itemQuantityLabel = "1 Millar";
-  } else if (text.includes("caja")) {
-    itemQuantityLabel = "1 Caja";
-  }
-
-  // 4. Extracción limpia de Precios (Buscamos el número asociado a "soles")
+  // Aislar el precio: si dices "soles", buscamos el número más cercano a esa palabra
   const priceRegex = /(\d+)\s*(?:soles|sol)/;
   const priceMatch = text.match(priceRegex);
   if (priceMatch) {
-    itemPrice = Number(priceMatch[1]);
-  } else if (matchedNumbers.length > 1) {
-    // Si fallan las letras pero hay dos números, el último número de la frase es el precio de venta
-    itemPrice = matchedNumbers[matchedNumbers.length - 1];
-  } else if (matchedNumbers.length === 1 && !modelMatch) {
-    // Si solo hay un número y no es el modelo, es el precio
-    itemPrice = matchedNumbers[0];
+    finalPrice = Number(priceMatch[1]);
+  } else if (numbers.length > 1) {
+    // Si hay múltiples números (ej: "vaso 10... 350 soles"), el último es el precio
+    finalPrice = numbers[numbers.length - 1];
+  } else if (numbers.length === 1 && text.includes("soles")) {
+    finalPrice = numbers[0];
   }
 
-  // Inyección segura al array de control
+  // LIMPIEZA TOTAL: Quitamos palabras de control para dejar el nombre del producto idéntico a lo que dictaste
+  let cleanProductName = text
+    .replace(/escuchar|número|numero|nro|n°/g, '')
+    .replace(/soles|sol|en|por|solo/g, '')
+    .replace(/paquete|un cuarto|cuarto|medio ciento|ciento|millar|docena|caja/g, '')
+    .replace(/\d+/g, '') // Quitamos los números sueltos del final
+    .trim();
+
+  // Si dictaste un modelo específico (ej: "vaso 10"), se lo volvemos a acoplar limpiamente al inicio
+  if (numbers.length > 0 && (text.includes("vaso") || text.includes("plato") || text.includes("bolsa") || text.includes("número"))) {
+    let prefijo = text.includes("vaso") ? "VASO" : (text.includes("plato") ? "PLATO" : "EMPAQUE");
+    cleanProductName = `${prefijo} N° ${numbers[0]} ${cleanProductName.replace(/vaso|plato|bolsa/g, '').trim()}`;
+  }
+
+  if (cleanProductName.length < 2) {
+    cleanProductName = "PRODUCTO DICTADO";
+  }
+
+  // Asignar icono dinámico según el rubro dictado libremente
+  let customIcon = "📦";
+  if (text.includes("arroz")) customIcon = "🌾";
+  else if (text.includes("polo") || text.includes("ropa")) customIcon = "👕";
+  else if (text.includes("sandalia") || text.includes("zapato")) customIcon = "🩴";
+  else if (text.includes("vaso")) customIcon = "🥤";
+  else if (text.includes("plato")) customIcon = "🍽️";
+
+  // Inyectar directo al carrito abierto
   cart.push({
-    displayTitle: `${itemType}${itemModel}`,
-    icon: itemIcon,
-    qtyLabel: itemQuantityLabel,
-    total: Number(itemPrice)
+    name: cleanProductName.toUpperCase(),
+    icon: customIcon,
+    unit: detectedUnit,
+    total: Number(finalPrice)
   });
 
   renderCartUI();
@@ -198,7 +186,7 @@ function renderCartUI() {
   const cartWrapper = document.getElementById('cart-wrapper'); const printWrapper = document.getElementById('print-items-area'); const clearBtn = document.getElementById('clear-all-btn');
   cartWrapper.innerHTML = ""; printWrapper.innerHTML = "";
   if (cart.length === 0) {
-    cartWrapper.innerHTML = '<div class="empty-state">Esperando dictado exacto de almacén. Precios editables en vivo.</div>';
+    cartWrapper.innerHTML = '<div class="empty-state">Base abierta. Todo lo que dictes aparecerá aquí al instante.</div>';
     clearBtn.style.display = "none"; document.getElementById('screen-total').innerText = "S/ 0.00"; document.getElementById('t-total').innerText = "S/ 0.00"; return;
   }
   clearBtn.style.display = "block"; let totalGeneral = 0;
@@ -208,17 +196,17 @@ function renderCartUI() {
     card.innerHTML = `
       <div class="prod-img-box">${item.icon}</div>
       <div class="prod-details">
-        <div class="prod-name">${item.displayTitle}</div>
+        <div class="prod-name">${item.name}</div>
         <div class="prod-qty-price">
-          <span>${item.qtyLabel} por S/</span>
-          <input type="number" step="0.50" class="price-input-box" value="${Number(item.total).toFixed(2)}" oninput="updateItemPriceLive(${index}, this.value)">
+          <span>${item.unit} por S/</span>
+          <input type="number" step="0.10" class="price-input-box" value="${Number(item.total).toFixed(2)}" oninput="updateItemPriceLive(${index}, this.value)">
         </div>
       </div>
       <button class="btn-delete-item" onclick="deleteSingleItem(${index})">❌</button>
     `;
     cartWrapper.appendChild(card);
     const printRow = document.createElement('div'); printRow.className = 't-grid';
-    printRow.innerHTML = `<div>${item.displayTitle} (${item.qtyLabel})</div><div class="t-right">S/ ${迫 = Number(item.total).toFixed(2)}</div>`;
+    printRow.innerHTML = `<div>${item.name} (${item.unit})</div><div class="t-right">S/ ${Number(item.total).toFixed(2)}</div>`;
     printWrapper.appendChild(printRow);
   });
   document.getElementById('screen-total').innerText = 'S/ ' + totalGeneral.toFixed(2); document.getElementById('t-total').innerText = 'S/ ' + totalGeneral.toFixed(2); updateWhatsAppContent();
@@ -233,7 +221,7 @@ function updateItemPriceLive(index, val) {
 }
 
 function deleteSingleItem(index) { cart.splice(index, 1); renderCartUI(); }
-function clearEntireCart() { if (confirm("¿Borrar todo el pedido?")) { cart = []; renderCartUI(); } }
+function clearEntireCart() { if (confirm("¿Borrar todo?")) { cart = []; renderCartUI(); } }
 function generatePdfFile() {
   const element = document.getElementById('ticket-print-area'); element.style.display = 'block';
   const opt = { margin: 0, filename: 'Proforma_EcoKaizen.pdf', image: { type: 'jpeg', quality: 0.98 }, html2canvas: { scale: 3, letterRendering: true }, jsPDF: { unit: 'mm', format: [80, 150], orientation: 'portrait' } };
