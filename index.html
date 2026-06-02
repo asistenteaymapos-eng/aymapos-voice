@@ -3,26 +3,16 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-<title>AymaPOS · ECOKAIZEN Voice Core</title>
-<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:wght@400;500;700&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<title>AymaPOS Core · ECOKAIZEN Voice</title>
+<link href="https://fonts.googleapis.com/css2=family=Bebas+Neue&family=DM+Mono:wght@400;500;700&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 <style>
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 
 :root{
-  --ink:#03050a;
-  --surface:#070a14;
-  --card:#0a0f24;
-  --card2:#0f1736;
-  --border:#162447;
-  --txt:#ecf3ff;
-  --dim:#536d9e;
-  --muted:#738ebf;
-  --cyan:#00f0ff;
-  --green:#00ffaa;
-  --red:#ff4772;
-  --gold-light:#ffe89e;
-  --gold-mid:#d4af37;
+  --ink:#03050a;--surface:#070a14;--card:#0a0f24;--card2:#0f1736;--border:#162447;
+  --txt:#ecf3ff;--dim:#536d9e;--muted:#738ebf;--cyan:#00f0ff;--green:#00ffaa;--red:#ff4772;
+  --gold-light:#ffe89e;--gold-mid:#d4af37;
   --gold-gradient: linear-gradient(135deg, #ffe89e 0%, #d4af37 40%, #aa7c11 70%, #f3e5ab 100%);
   --wa:#25D366;--wa2:#128C7E;
 }
@@ -31,35 +21,36 @@ body{background:var(--ink);font-family:'Outfit',sans-serif;color:var(--txt);min-
 .smartphone-shell{width:100%;max-width:412px;background:#000;border-radius:40px;padding:12px;box-shadow:0 25px 60px rgba(0,0,0,0.8);border:2px solid #333}
 .screen{background:var(--ink);border-radius:32px;width:100%;height:100%;overflow-y:auto;padding:20px 16px}
 
-/* Topbar */
 .topbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px}
 .brand{display:flex;align-items:center;gap:10px}
 .logo-icon{width:34px;height:34px;background:var(--card2);border:1.5px solid var(--gold-mid);border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Bebas Neue',sans-serif;font-size:14px;color:var(--gold-light)}
 .app-title{font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:1px;background:var(--gold-gradient);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
 
-/* Consola de voz */
 .voice-panel{background:var(--card);border:1px solid rgba(212,175,55,0.2);border-radius:20px;padding:16px;margin-bottom:20px;text-align:center}
 .mic-btn{width:56px;height:56px;border-radius:50%;background:var(--gold-gradient);border:none;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;font-size:20px;color:var(--ink);box-shadow:0 0 15px rgba(212,175,55,0.4);margin-bottom:10px}
 .mic-btn.listening{background:linear-gradient(135deg,var(--red),#ff7693);box-shadow:0 0 20px rgba(255,71,114,0.5);animation:pulse 1.2s infinite}
 @keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.05)}}
-.transcript-area{font-size:12px;color:var(--muted);font-style:italic;min-height:32px;margin-bottom:12px;line-height:1.4}
+.transcript-area{font-size:12px;color:var(--muted);font-style:italic;min-height:36px;margin-bottom:12px;line-height:1.4}
 
 .phone-field{display:flex;flex-direction:column;gap:4px;text-align:left}
 .phone-field label{font-family:'DM Mono',monospace;font-size:9px;color:var(--gold-light);text-transform:uppercase}
 .phone-field input{background:var(--card2);border:1px solid rgba(212,175,55,0.2);border-radius:8px;padding:8px 12px;color:var(--txt);width:100%}
 
-/* Carrito vacío / dinámico */
+.section-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+.btn-clear-all{background:transparent;border:1px solid var(--red);color:var(--red);padding:4px 8px;border-radius:6px;font-size:11px;font-weight:600;cursor:pointer;font-family:'Outfit',sans-serif}
+.btn-clear-all:hover{background:rgba(255,71,114,0.1)}
+
 .items-container{display:flex;flex-direction:column;gap:12px;margin-bottom:20px}
 .empty-state{text-align:center;padding:30px 20px;color:var(--dim);font-size:13px;border:1px dashed rgba(255,255,255,0.05);border-radius:16px}
 
-.product-card{background:var(--card);border:1px solid rgba(212,175,55,0.25);border-radius:16px;padding:12px;display:flex;align-items:center;gap:12px}
-.prod-img-box{width:46px;height:46px;border-radius:50%;border:1.5px solid var(--gold-mid);display:flex;align-items:center;justify-content:center;background:#000;font-size:18px;flex-shrink:0}
+.product-card{background:var(--card);border:1px solid rgba(212,175,55,0.25);border-radius:16px;padding:12px;display:flex;align-items:center;gap:12px;position:relative}
+.prod-img-box{width:40px;height:40px;border-radius:50%;border:1.5px solid var(--gold-mid);display:flex;align-items:center;justify-content:center;background:#000;font-size:16px;flex-shrink:0}
 .prod-details{flex:1;min-width:0}
 .prod-name{font-size:13px;font-weight:600;color:#fff}
 .prod-qty-price{font-family:'DM Mono',monospace;font-size:11px;color:var(--muted);margin-top:2px}
 .prod-total{font-family:'DM Mono',monospace;font-size:13px;color:var(--gold-light);font-weight:600;margin-top:4px}
+.btn-delete-item{background:transparent;border:none;color:var(--red);font-size:16px;cursor:pointer;padding:8px;position:absolute;right:8px;top:50%;transform:translateY(-50%)}
 
-/* Total en pantalla */
 .total-display-box{background:var(--card2);border:1px solid var(--border);border-radius:14px;padding:14px;display:flex;justify-content:space-between;align-items:center;margin-bottom:20px}
 .total-lbl{font-family:'Bebas Neue',sans-serif;font-size:16px;letter-spacing:1px;color:var(--muted)}
 .total-val{font-family:'DM Mono',monospace;font-size:20px;font-weight:700;color:var(--green)}
@@ -67,7 +58,6 @@ body{background:var(--ink);font-family:'Outfit',sans-serif;color:var(--txt);min-
 .btn-pagar{width:100%;padding:14px;border-radius:14px;background:var(--gold-gradient);border:none;font-family:'Outfit',sans-serif;font-size:15px;font-weight:700;color:var(--ink);cursor:pointer;text-transform:uppercase;margin-bottom:10px}
 .btn-wa{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:12px;border-radius:12px;background:linear-gradient(135deg,var(--wa),var(--wa2));color:#fff;font-size:13px;font-weight:600;text-decoration:none}
 
-/* Capa Ticket Oculta */
 #ticket-print-area{display:none;background:#fff;color:#000;padding:16px;font-family:'Courier New',Courier,monospace;font-size:12px;width:80mm}
 .t-center{text-align:center}.t-bold{font-weight:bold}.t-line{border-bottom:1px dashed #000;margin:8px 0}.t-grid{display:grid;grid-template-columns:35px 1fr 45px 55px;gap:4px}.t-right{text-align:right}
 
@@ -87,18 +77,18 @@ body{background:var(--ink);font-family:'Outfit',sans-serif;color:var(--txt);min-
       <div class="brand">
         <div class="logo-icon">EK</div>
         <div>
-          <div class="app-title">AymaPOS · Voice Engine</div>
-          <div style="font-size:9px; color:var(--dim)">PRODUCTOS ECOLÓGICOS REALES</div>
+          <div class="app-title">AymaPOS Core</div>
+          <div style="font-size:9px; color:var(--dim)">RECONOCIMIENTO DE VOZ REAL</div>
         </div>
       </div>
       <div style="font-family:'DM Mono',monospace; font-size:10px; color:var(--gold-light)">● ECOKAIZEN</div>
     </div>
 
-    <!-- CONSOLA MÓVIL -->
+    <!-- CONSOLA MÓVIL DE VOZ -->
     <div class="voice-panel">
-      <button class="mic-btn" id="mic-trigger" onclick="captureVoiceOrder()">🔊</button>
-      <div id="mic-label" style="font-size:11px; font-weight:600; color:var(--gold-light)">Presiona y dicta el pedido</div>
-      <div class="transcript-area" id="transcript-txt">"El carrito está vacío. Toca el micrófono y habla para que la IA arme la proforma en pantalla automáticamente..."</div>
+      <button class="mic-btn" id="mic-trigger" onclick="toggleVoiceRecognition()">🔊</button>
+      <div id="mic-label" style="font-size:11px; font-weight:600; color:var(--gold-light)">Toca para hablar (Voz Real)</div>
+      <div class="transcript-area" id="transcript-txt">"Dí algo como: '500 vasos de ocho onzas' o '50 bolsas pet'..."</div>
       
       <div class="phone-field">
         <label>WhatsApp del Cliente</label>
@@ -106,16 +96,18 @@ body{background:var(--ink);font-family:'Outfit',sans-serif;color:var(--txt);min-
       </div>
     </div>
 
-    <div style="font-family:'DM Mono',monospace; font-size:10px; color:var(--gold-light); margin-bottom:10px; text-transform:uppercase">CARRITO DE COMPRA ACTIVO</div>
+    <div class="section-header">
+      <div style="font-family:'DM Mono',monospace; font-size:10px; color:var(--gold-light); text-transform:uppercase">Pedido del Cliente</div>
+      <button class="btn-clear-all" id="clear-all-btn" style="display:none;" onclick="clearEntireCart()">🗑️ Vaciar Todo</button>
+    </div>
 
     <!-- CONTENEDOR DINÁMICO DE PRODUCTOS -->
     <div class="items-container" id="cart-wrapper">
-      <div class="empty-state" id="empty-msg">No hay productos en el pedido. Use el comando de voz.</div>
+      <div class="empty-state" id="empty-msg">No hay empaques en la proforma. Toca el micro y habla.</div>
     </div>
 
-    <!-- MONTO TOTAL VISIBLE EN PANTALLA -->
     <div class="total-display-box">
-      <span class="total-lbl">TOTAL CALCULADO</span>
+      <span class="total-lbl">TOTAL NETO</span>
       <span class="total-val" id="screen-total">S/ 0.00</span>
     </div>
 
@@ -127,17 +119,16 @@ body{background:var(--ink);font-family:'Outfit',sans-serif;color:var(--txt);min-
   </div>
 </div>
 
-<!-- COMPROBANTE FÍSICO 80MM -->
+<!-- TICKET FÍSICO PARA TICKETERA DE 80MM -->
 <div id="ticket-print-area">
   <div class="t-center t-bold" style="font-size:14px;">ECOKAIZEN E.I.R.L.</div>
   <div class="t-center">RUC: 20603793430</div>
   <div class="t-center">Manuel Pardo 548 - Chiclayo</div>
   <div class="t-line"></div>
   <div class="t-center t-bold">PROFORMA / NOTA DE VENTA</div>
-  <div class="t-center t-bold">N° PRO-002685</div>
   <div class="t-line"></div>
   <div>FECHA: <span id="t-fecha">--/--/----</span></div>
-  <div>CLIENTE: <span class="t-bold" id="t-client-name">Cliente Registrado</span></div>
+  <div>CLIENTE: <span class="t-bold">Control de Almacén</span></div>
   <div class="t-line"></div>
   <div class="t-grid t-bold">
     <div>CANT</div><div>DESCRIPCION</div><div class="t-right">P.U.</div><div class="t-right">TOTAL</div>
@@ -146,122 +137,210 @@ body{background:var(--ink);font-family:'Outfit',sans-serif;color:var(--txt);min-
   <div id="print-items-area"></div>
   <div class="t-line"></div>
   <div style="display:flex; justify-content:space-between; font-weight:bold;">
-    <span>TOTAL NETO A PAGAR:</span>
+    <span>TOTAL A PAGAR:</span>
     <span id="t-total">S/ 0.00</span>
   </div>
   <div class="t-line"></div>
   <div class="t-center" style="font-size:10px;">*** Documento de Control Interno ***</div>
-  <div class="t-center" style="font-size:10px;">Despacho de Materiales Ecológicos</div>
 </div>
 
 <script>
-// Diccionario Real de Precios de EcoKaizen para la simulación estructurada de la IA
-const DB_PRODUCTOS = {
-  vaso8:  { nombre: "Vaso de Papel 8oz (Ecológico)", pu: 0.18, icon: "🥤" },
-  vaso12: { nombre: "Vaso de Papel 12oz (Ecológico)", pu: 0.25, icon: "🥤" },
-  plato:  { nombre: "Plato de Caña de Azúcar", pu: 0.35, icon: "🍽️" },
-  bowl:   { nombre: "Bowl de Papel Kraft 12oz", pu: 0.45, icon: "🥣" },
-  bolsa:  { nombre: "Bolsa de Material PET Sostenible", pu: 0.60, icon: "🛍️" }
-};
+// Muestra simplificada de la Base de Datos de 2,000 productos con lógica Mayor y Menor.
+// Si la cantidad es igual o mayor a 100 unidades, el algoritmo aplica automáticamente el precio por Mayor.
+const PRODUCT_DICTIONARY = [
+  { keywords: ["vaso", "ocho", "8"], nombre: "Vaso de Papel 8oz (Eco)", menor: 0.25, mayor: 0.18, icon: "🥤" },
+  { keywords: ["vaso", "doce", "12"], nombre: "Vaso de Papel 12oz (Eco)", menor: 0.35, mayor: 0.25, icon: "🥤" },
+  { keywords: ["plato", "caña"], nombre: "Plato de Caña de Azúcar", menor: 0.45, mayor: 0.35, icon: "🍽️" },
+  { keywords: ["bowl", "kraft"], nombre: "Bowl de Papel Kraft 12oz", menor: 0.55, mayor: 0.45, icon: "🥣" },
+  { keywords: ["bolsa", "pet"], nombre: "Bolsa de Material PET Sostenible", menor: 0.80, mayor: 0.60, icon: "🛍️" }
+];
 
-let currentOrder = [];
+let cart = [];
+let recognition;
+let isListening = false;
 
-function captureVoiceOrder() {
-  const btn = document.getElementById('mic-trigger');
-  const lbl = document.getElementById('mic-label');
-  
-  btn.className = "mic-btn listening";
-  lbl.innerText = "Escuchando audio en vivo...";
-  document.getElementById('transcript-txt').innerText = "Gemini AI interpretando empaques y volúmenes...";
+// Configuración nativa del Reconocimiento de Voz del Celular
+if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+  const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+  recognition = new SpeechRecognition();
+  recognition.lang = 'es-PE'; // Español peruano
+  recognition.continuous = false;
+  recognition.interimResults = false;
 
-  // Simulación: La IA de Gemini escucha el audio y genera el JSON estructurado con los productos reales
-  setTimeout(() => {
-    btn.className = "mic-btn";
-    lbl.innerText = "Dictar venta por Voz";
-    document.getElementById('transcript-txt').innerText = '"Carlos solicitó 500 vasos de papel de 8oz, 300 platos de caña de azúcar y 200 bolsas de material PET para Trujillo..."';
-    
-    // JSON real devuelto por la IA
-    currentOrder = [
-      { id: 'vaso8', cant: 500 },
-      { id: 'plato', cant: 300 },
-      { id: 'bolsa', cant: 200 }
-    ];
-    
-    renderActiveCart();
-  }, 2500);
+  recognition.onstart = () => {
+    isListening = true;
+    document.getElementById('mic-trigger').className = "mic-btn listening";
+    document.getElementById('mic-label').innerText = "Escuchando tu voz...";
+    document.getElementById('transcript-txt').innerText = "Habla ahora de forma clara...";
+  };
+
+  recognition.onerror = (e) => {
+    console.error(e);
+    stopMicUI();
+  };
+
+  recognition.onend = () => {
+    stopMicUI();
+  };
+
+  recognition.onresult = (event) => {
+    const textResult = event.results[0][0].transcript.toLowerCase();
+    document.getElementById('transcript-txt').innerText = `Entendido: "${event.results[0][0].transcript}"`;
+    processVoiceText(textResult);
+  };
+} else {
+  document.getElementById('transcript-txt').innerText = "Tu navegador móvil no soporta comandos de voz nativos. Usa un navegador moderno.";
 }
 
-function renderActiveCart() {
-  const cartContainer = document.getElementById('cart-wrapper');
-  const printContainer = document.getElementById('print-items-area');
+function toggleVoiceRecognition() {
+  if (!recognition) return;
+  if (isListening) {
+    recognition.stop();
+  } else {
+    recognition.start();
+  }
+}
+
+function stopMicUI() {
+  isListening = false;
+  document.getElementById('mic-trigger').className = "mic-btn";
+  document.getElementById('mic-label').innerText = "Toca para hablar (Voz Real)";
+}
+
+// Inteligencia de Búsqueda y Algoritmo de Precios (Por Mayor vs Por Menor)
+function processVoiceText(text) {
+  // Extraer números usando expresiones regulares para identificar cantidades
+  const numbersFound = text.match(/\d+/g);
+  if (!numbersFound) {
+    alert("No se detectaron cantidades numéricas en el comando.");
+    return;
+  }
+  const cantidad = parseInt(numbersFound[0], 10);
+
+  // Buscar coincidencia de palabras clave dentro de tus miles de productos
+  let productMatched = null;
+  for (let prod of PRODUCT_DICTIONARY) {
+    let matchCount = 0;
+    for (let kw of prod.keywords) {
+      if (text.includes(kw)) matchCount++;
+    }
+    if (matchCount >= 1) { // Requiere al menos una coincidencia clave
+      productMatched = prod;
+      break;
+    }
+  }
+
+  if (productMatched) {
+    // Aplicar precio por MAYOR si lleva 100 o más, de lo contrario precio por MENOR
+    const usarPrecioMayor = cantidad >= 100;
+    const precioUnitario = usarPrecioMayor ? productMatched.mayor : productMatched.menor;
+    const tipoPrecio = usarPrecioMayor ? "Por Mayor" : "Por Menor";
+
+    // Validar si el producto ya existe en el pedido para acumularlo
+    const existingIndex = cart.findIndex(item => item.nombre === productMatched.nombre);
+    if (existingIndex > -1) {
+      cart[existingIndex].cant += cantidad;
+      // Recalcular precio unitario del consolidado según nueva cantidad
+      const nuevaCantidad = cart[existingIndex].cant;
+      cart[existingIndex].pu = nuevaCantidad >= 100 ? productMatched.mayor : productMatched.menor;
+      cart[existingIndex].tipo = nuevaCantidad >= 100 ? "Por Mayor" : "Por Menor";
+    } else {
+      cart.push({
+        nombre: productMatched.nombre,
+        icon: productMatched.icon,
+        cant: cantidad,
+        pu: precioUnitario,
+        tipo: tipoPrecio
+      });
+    }
+    renderCartUI();
+  } else {
+    alert("Producto no identificado en el catálogo. Intente dictando palabras clave específicas.");
+  }
+}
+
+// Renderizado Dinámico e inyección de botones de Eliminación
+function renderCartUI() {
+  const cartWrapper = document.getElementById('cart-wrapper');
+  const printWrapper = document.getElementById('print-items-area');
+  const clearBtn = document.getElementById('clear-all-btn');
   
-  cartContainer.innerHTML = "";
-  printContainer.innerHTML = "";
+  cartWrapper.innerHTML = "";
+  printWrapper.innerHTML = "";
   
-  if(currentOrder.length === 0) {
-    document.getElementById('empty-msg').style.display = "block";
+  if (cart.length === 0) {
+    cartWrapper.innerHTML = '<div class="empty-state">No hay empaques en la proforma. Toca el micro y habla.</div>';
+    clearBtn.style.display = "none";
     document.getElementById('screen-total').innerText = "S/ 0.00";
     document.getElementById('t-total').innerText = "S/ 0.00";
     return;
   }
-  
-  let totalAcumulado = 0;
 
-  currentOrder.forEach(item => {
-    const prodInfo = DB_PRODUCTOS[item.id];
-    const subtotal = item.cant * prodInfo.pu;
-    totalAcumulado += subtotal;
+  clearBtn.style.display = "block";
+  let totalGeneral = 0;
 
-    // 1. Mostrar de forma dinámica en la pantalla del celular
+  cart.forEach((item, index) => {
+    const subtotal = item.cant * item.pu;
+    totalGeneral += subtotal;
+
+    // Vista en pantalla móvil con botón de eliminación individual
     const card = document.createElement('div');
     card.className = 'product-card';
     card.innerHTML = `
-      <div class="prod-img-box">${prodInfo.icon}</div>
+      <div class="prod-img-box">${item.icon}</div>
       <div class="prod-details">
-        <div class="prod-name">${prodInfo.nombre}</div>
-        <div class="prod-qty-price">${item.cant} und. x S/ ${prodInfo.pu.toFixed(2)}</div>
-        <div class="prod-total">Subtotal: S/ ${subtotal.toFixed(2)}</div>
+        <div class="prod-name">${item.nombre}</div>
+        <div class="prod-qty-price">${item.cant} und. x S/ ${item.pu.toFixed(2)} <span style="color:var(--cyan); font-size:9px;">(${item.tipo})</span></div>
+        <div class="prod-total">S/ ${subtotal.toFixed(2)}</div>
       </div>
+      <button class="btn-delete-item" onclick="deleteSingleItem(${index})">❌</button>
     `;
-    cartContainer.appendChild(card);
+    cartWrapper.appendChild(card);
 
-    // 2. Inyectar al mismo tiempo en el formato de impresión térmica de 80mm
+    // Formato de Ticketera Térmica Física de 80mm
     const printRow = document.createElement('div');
     printRow.className = 't-grid';
-    printRow.innerHTML = `<div>${item.cant}</div><div>${prodInfo.nombre}</div><div class="t-right">${prodInfo.pu.toFixed(2)}</div><div class="t-right">${subtotal.toFixed(2)}</div>`;
-    printContainer.appendChild(printRow);
+    printRow.innerHTML = `<div>${item.cant}</div><div>${item.nombre}</div><div class="t-right">${item.pu.toFixed(2)}</div><div class="t-right">${subtotal.toFixed(2)}</div>`;
+    printWrapper.appendChild(printRow);
   });
 
-  // Mostrar el monto total en la pantalla y en el ticket
-  document.getElementById('screen-total').innerText = 'S/ ' + totalAcumulado.toFixed(2);
-  document.getElementById('t-total').innerText = 'S/ ' + totalAcumulado.toFixed(2);
+  document.getElementById('screen-total').innerText = 'S/ ' + totalGeneral.toFixed(2);
+  document.getElementById('t-total').innerText = 'S/ ' + totalGeneral.toFixed(2);
   updateWhatsAppContent();
+}
+
+// Botón de Eliminación Individual
+function deleteSingleItem(index) {
+  cart.splice(index, 1);
+  renderCartUI();
+}
+
+// Botón de Eliminación General (Vaciar todo)
+function clearEntireCart() {
+  if (confirm("¿Está seguro de que desea borrar todos los productos del pedido actual?")) {
+    cart = [];
+    renderCartUI();
+  }
 }
 
 function generatePdfFile() {
   const element = document.getElementById('ticket-print-area');
   element.style.display = 'block';
-  
   const opt = {
     margin: 0,
-    filename: 'Proforma_EcoKaizen.pdf',
+    filename: 'Proforma_Voz_EcoKaizen.pdf',
     image: { type: 'jpeg', quality: 0.98 },
     html2canvas: { scale: 3, letterRendering: true },
-    jsPDF: { unit: 'mm', format: [80, 160], orientation: 'portrait' }
+    jsPDF: { unit: 'mm', format: [80, 150], orientation: 'portrait' }
   };
-  
-  html2pdf().set(opt).from(element).save().then(() => {
-    element.style.display = 'none';
-  });
+  html2pdf().set(opt).from(element).save().then(() => { element.style.display = 'none'; });
 }
 
 function updateWhatsAppContent() {
   const phone = document.getElementById('c-phone').value.trim() || '51949546919';
   const total = document.getElementById('screen-total').innerText;
-  const pdfCloudLink = window.location.href.split('?')[0] + "_comprobante.pdf";
-  
-  const msg = `*ECOKAIZEN E.I.R.L.* 🏢\n_Distribución de Empaques Ecológicos_\n\n*PROFORMA / NOTA DE CONTROL*\n----------------------------------------\n*Monto Total:* ${total}\n*Estado:* Procesado por Voz (AymaPOS)\n----------------------------------------\n\n📄 *Descargar Proforma PDF de 80mm:*\n${pdfCloudLink}`;
-  
+  const pdfCloudLink = window.location.href.split('?')[0] + "_pedido.pdf";
+  const msg = `*ECOKAIZEN E.I.R.L.* 🏢\n\n*PROFORMA / NOTA DE VENTA*\n----------------------------------------\n*Total:* ${total}\n----------------------------------------\n\n📄 *Descargar Ticket PDF 80mm:*\n${pdfCloudLink}`;
   document.getElementById('wa-send-link').href = 'https://api.whatsapp.com/send?phone=' + phone + '&text=' + encodeURIComponent(msg);
 }
 
