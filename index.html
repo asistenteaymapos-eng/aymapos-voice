@@ -3,8 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-<title>AymaPOS Core · ECOKAIZEN Safe Audio</title>
+<title>AymaPOS Core · ECOKAIZEN Strict Audio</title>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:wght=400;500;700&family=Outfit:wght=300;400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 <style>
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 :root{
@@ -22,14 +23,16 @@ body{background:var(--ink);font-family:'Outfit',sans-serif;color:var(--txt);min-
 .mic-btn{width:56px;height:56px;border-radius:50%;background:var(--gold-gradient);border:none;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;font-size:20px;color:var(--ink);box-shadow:0 0 15px rgba(212,175,55,0.4);margin-bottom:10px}
 .mic-btn.listening{background:linear-gradient(135deg,var(--red),#ff7693);box-shadow:0 0 20px rgba(255,71,114,0.5);animation:pulse 1.2s infinite}
 @keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.05)}}
-.transcript-area{font-size:13px;color:#fff;font-weight:500;background:rgba(255,255,255,0.03);padding:8px;border-radius:10px;min-height:45px;margin-bottom:12px;line-height:1.4;border:1px solid rgba(255,255,255,0.05);word-break:break-word;text-align:left}
-.btn-process{width:100%;padding:10px;background:linear-gradient(135deg, var(--cyan), #00a8ff);border:none;border-radius:10px;color:#000;font-weight:800;font-size:12px;cursor:pointer;text-transform:uppercase;letter-spacing:0.5px;margin-top:4px}
+.transcript-area{font-size:13px;color:#fff;font-weight:500;background:rgba(255,255,255,0.03);padding:8px;border-radius:10px;min-height:55px;margin-bottom:12px;line-height:1.4;border:1px solid rgba(255,255,255,0.05);word-break:break-word;text-align:left}
+.btn-insertar{width:100%;padding:12px;background:linear-gradient(135deg, var(--cyan), #00a8ff);border:none;border-radius:12px;color:#000;font-weight:800;font-size:13px;cursor:pointer;text-transform:uppercase;letter-spacing:0.5px;margin-top:4px}
+.btn-insertar:active{transform:scale(0.98);opacity:0.9}
 .section-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
 .btn-clear-all{background:transparent;border:1px solid var(--red);color:var(--red);padding:4px 8px;border-radius:6px;font-size:11px;font-weight:600;cursor:pointer}
 .items-container{display:flex;flex-direction:column;gap:12px;margin-bottom:20px}
 .empty-state{text-align:center;padding:30px 20px;color:var(--dim);font-size:13px;border:1px dashed rgba(255,255,255,0.05);border-radius:16px}
 .product-card{background:var(--card);border:1px solid rgba(212,175,55,0.25);border-radius:16px;padding:12px;display:flex;flex-direction:column;gap:4px;position:relative}
 .editable-name-input{background:transparent;border:none;border-bottom:1px dashed var(--dim);color:#fff;font-size:14px;font-weight:700;width:90%;text-transform:uppercase;padding:2px 0}
+.editable-name-input:focus{border-bottom:1px solid var(--gold-mid);outline:none}
 .prod-details-row{display:flex;align-items:center;justify-content:space-between;background:var(--card2);padding:6px 10px;border-radius:8px;margin-top:4px}
 .inputs-grp{display:flex;align-items:center;gap:4px;font-size:11px;color:var(--muted)}
 .input-cell{background:var(--ink);border:1px solid var(--border);color:#fff;font-family:'DM Mono',monospace;font-size:12px;padding:4px;border-radius:6px;text-align:center}
@@ -49,16 +52,16 @@ body{background:var(--ink);font-family:'Outfit',sans-serif;color:var(--txt);min-
     </div>
     <div class="voice-panel">
       <button class="mic-btn" id="mic-trigger" onclick="toggleVoiceRecognition()">🔊</button>
-      <div id="mic-label" style="font-size:11px; font-weight:600; color:var(--gold-light)">Toca para iniciar audio continuo</div>
-      <div class="transcript-area" id="transcript-txt">Esperando dictado...</div>
-      <button class="btn-process" onclick="processAccumulatedText()">📥 Insertar a la Proforma</button>
+      <div id="mic-label" style="font-size:11px; font-weight:600; color:var(--gold-light)">Toca para hablar (Modo Continuo)</div>
+      <div class="transcript-area" id="transcript-txt">Esperando dictado con calma...</div>
+      <button class="btn-insertar" onclick="processFinalSpeechBlock()">📥 Cargar a la Proforma</button>
     </div>
     <div class="section-header">
       <div style="font-family:'DM Mono',monospace; font-size:10px; color:var(--gold-light); text-transform:uppercase">Estructura de Comprobante</div>
       <button class="btn-clear-all" id="clear-all-btn" style="display:none;" onclick="clearEntireCart()">🗑️ Vaciar Todo</button>
     </div>
     <div class="items-container" id="cart-wrapper">
-      <div class="empty-state">Usa el micro con libertad. Presiona el botón azul para cargar el item de forma segura.</div>
+      <div class="empty-state">Toma tu tiempo dictando arriba. Al terminar, usa el botón azul.</div>
     </div>
     <div class="total-display-box"><span class="total-lbl">TOTAL NETO</span><span class="total-val" id="screen-total">S/ 0.00</span></div>
     <button class="btn-pagar" onclick="window.print()">Imprimir Ticket 80mm 🖨️</button>
@@ -67,7 +70,7 @@ body{background:var(--ink);font-family:'Outfit',sans-serif;color:var(--txt);min-
 
 <script>
 let cart = []; let recognition; let isListening = false;
-let latestTranscriptText = "";
+let currentSpeechAccumulator = "";
 
 if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
   const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
@@ -78,23 +81,23 @@ if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
 
   recognition.onstart = () => {
     isListening = true;
-    latestTranscriptText = "";
+    currentSpeechAccumulator = "";
     document.getElementById('mic-trigger').className = "mic-btn listening";
-    document.getElementById('mic-label').innerText = "🛑 DETENER ENFOQUE DE AUDIO";
+    document.getElementById('mic-label').innerText = "🛑 TOCAR PARA DETENER GRABACIÓN";
   };
 
   recognition.onerror = () => { stopMicUI(); };
   recognition.onend = () => { stopMicUI(); };
 
   recognition.onresult = (event) => {
-    let interim = "";
+    let interimStr = "";
     let finalStr = "";
     for (let i = event.resultIndex; i < event.results.length; ++i) {
       if (event.results[i].isFinal) finalStr += event.results[i][0].transcript + " ";
-      else interim += event.results[i][0].transcript;
+      else interimStr += event.results[i][0].transcript;
     }
-    if(finalStr !== "") latestTranscriptText += finalStr;
-    document.getElementById('transcript-txt').innerText = latestTranscriptText + interim;
+    if(finalStr !== "") currentSpeechAccumulator += finalStr;
+    document.getElementById('transcript-txt').innerText = currentSpeechAccumulator + interimStr;
   };
 }
 
@@ -106,35 +109,41 @@ function toggleVoiceRecognition() {
 function stopMicUI() {
   isListening = false;
   document.getElementById('mic-trigger').className = "mic-btn";
-  document.getElementById('mic-label').innerText = "🔊 Toca para hablar (Continuo)";
+  document.getElementById('mic-label').innerText = "🔊 Toca para hablar (Modo Continuo)";
 }
 
-// PROCESADOR PROTEGIDO: Solo se ejecuta al pulsar el botón azul manualmente
-function processAccumulatedText() {
+// ESTA FUNCIÓN SE ENCARGA DE FILTRAR LAS REPETICIONES SÓLO AL PULSAR EL BOTÓN AZUL
+function processFinalSpeechBlock() {
   let rawText = document.getElementById('transcript-txt').innerText.toLowerCase().trim();
   if (rawText.includes("esperando") || rawText.length < 3) return;
 
-  let cleaned = rawText.replace(/puntos|punto/g, '.').replace(/escuchar|hasta|ósea|osea/g, '').trim();
+  let cleaned = rawText.replace(/puntos|punto/g, '.').replace(/hasta|ósea|osea|esperate/g, '').trim();
   const numbers = cleaned.match(/\d+(\.\d+)?/g) ? cleaned.match(/\d+(\.\d+)?/g).map(Number) : [];
   
   let pName = "PRODUCTO GENERAL";
   let pUnit = "1 Paquete";
   let pPrice = 0.00;
 
+  // 1. Clasificación por coincidencia estricta de palabras clave
   if (cleaned.includes("deli") || cleaned.includes("litro")) pName = "DELI 1 LITRO";
   else if (cleaned.includes("plato") || cleaned.includes("plata")) pName = "PLATO DE CAÑA";
   else if (cleaned.includes("vaso")) pName = "VASO";
   else if (cleaned.includes("bolsa") || cleaned.includes("pet")) pName = "BOLSA PET";
   else if (cleaned.includes("cuchara")) pName = "CUCHARA";
   else if (cleaned.includes("bandeja")) pName = "BANDEJA";
+  else if (cleaned.includes("cochera")) pName = "COCHERA";
 
+  // Capturar el modelo numérico si existe
   const modelMatch = cleaned.match(/(?:número|numero|nro|n°|vaso|plato|bolsa|cuchara|bandeja)\s*(\d+)/);
   if (modelMatch) {
     pName += " #" + modelMatch[1];
-  } else if (numbers.length > 0 && pName !== "DELI 1 LITRO") {
+  } else if (numbers.length > 0 && pName !== "DELI 1 LITRO" && pName !== "COCHERA") {
     pName += " #" + numbers[0];
+  } else if (numbers.length > 0 && pName === "COCHERA") {
+    pName += " N° " + numbers[0];
   }
 
+  // 2. Extraer volumen o fracciones comerciales
   if (cleaned.includes("cuarto")) pUnit = "1/4 Ciento";
   else if (cleaned.includes("medio ciento")) pUnit = "1/2 Ciento";
   else if (cleaned.includes("ciento")) pUnit = "1 Ciento";
@@ -147,6 +156,7 @@ function processAccumulatedText() {
     else if (cleaned.includes("paquete")) pUnit = "1 Paquete";
   }
 
+  // 3. Aislar los soles (Siempre el último número de la cadena)
   if (numbers.length > 0) {
     pPrice = numbers[numbers.length - 1];
   }
@@ -155,25 +165,25 @@ function processAccumulatedText() {
   }
 
   if (pName === "PRODUCTO GENERAL") {
-    pName = cleaned.toUpperCase().substring(0, 30);
+    pName = cleaned.toUpperCase().substring(0, 32);
   }
 
-  // Control estricto anti-duplicados: si el nombre ya existe en el carrito actual, no lo vuelve a meter solo
+  // Evitar meter registros duplicados al carrito
   if (!cart.some(item => item.name === pName && item.unit === pUnit)) {
     cart.push({ name: pName, unit: pUnit, price: Number(pPrice) });
     renderCartUI();
   }
   
-  // Limpiar el cuadro de texto superior para la siguiente orden
-  document.getElementById('transcript-txt').innerText = "Esperando dictado...";
-  latestTranscriptText = "";
+  // Dejar el cuadro de diálogo limpio listo para el próximo pedido
+  document.getElementById('transcript-txt').innerText = "Esperando dictado con calma...";
+  currentSpeechAccumulator = "";
 }
 
 function renderCartUI() {
   const wrapper = document.getElementById('cart-wrapper'); const clearBtn = document.getElementById('clear-all-btn');
   wrapper.innerHTML = "";
   if (cart.length === 0) {
-    wrapper.innerHTML = '<div class="empty-state">Usa el micro con libertad. Presiona el botón azul para cargar el item de forma segura.</div>';
+    wrapper.innerHTML = '<div class="empty-state">Toma tu tiempo dictando arriba. Al terminar, usa el botón azul.</div>';
     clearBtn.style.display = "none"; document.getElementById('screen-total').innerText = "S/ 0.00"; return;
   }
   clearBtn.style.display = "block"; let totalGeneral = 0;
@@ -182,16 +192,16 @@ function renderCartUI() {
     const card = document.createElement('div'); card.className = 'product-card';
     card.innerHTML = `
       <div class="card-row-top">
-        <input type="text" class="editable-name-input" value="${item.name}" onchange="updateCartItemDirectly(${index}, 'name', this.value)">
+        <input type="text" class="editable-name-input" value="${item.name}" onchange="updateCartItemData(${index}, 'name', this.value)">
       </div>
       <div class="prod-details-row">
         <div class="inputs-grp">
           <span>Cant:</span>
-          <input type="text" class="input-cell" style="width: 100px;" value="${item.unit}" onchange="updateCartItemDirectly(${index}, 'unit', this.value)">
+          <input type="text" class="input-cell" style="width: 100px;" value="${item.unit}" onchange="updateCartItemData(${index}, 'unit', this.value)">
         </div>
         <div class="inputs-grp">
           <span>Total S/</span>
-          <input type="number" step="0.50" class="input-cell" style="width: 75px; color:var(--green); font-weight:700;" value="${Number(item.price).toFixed(2)}" oninput="updateCartItemDirectly(${index}, 'price', this.value)">
+          <input type="number" step="0.50" class="input-cell" style="width: 75px; color:var(--green); font-weight:700;" value="${Number(item.price).toFixed(2)}" oninput="updateCartItemData(${index}, 'price', this.value)">
         </div>
       </div>
       <button class="btn-delete-item" onclick="deleteSingleItem(${index})">❌</button>
@@ -201,7 +211,7 @@ function renderCartUI() {
   document.getElementById('screen-total').innerText = 'S/ ' + totalGeneral.toFixed(2);
 }
 
-function updateCartItemDirectly(index, key, val) {
+function updateCartItemData(index, key, val) {
   if (key === 'price') cart[index].price = Number(val) || 0;
   else if (key === 'unit') cart[index].unit = val;
   else if (key === 'name') cart[index].name = val.toUpperCase();
