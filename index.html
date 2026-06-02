@@ -3,8 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-<title>AymaPOS Core · ECOKAIZEN Express</title>
+<title>AymaPOS Core · ECOKAIZEN Strict Parser</title>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:wght=400;500;700&family=Outfit:wght=300;400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 <style>
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 :root{
@@ -13,39 +14,28 @@
   --gold-light:#ffe89e;--gold-mid:#d4af37;
   --gold-gradient: linear-gradient(135deg, #ffe89e 0%, #d4af37 40%, #aa7c11 70%, #f3e5ab 100%);
 }
-body{background:var(--ink);font-family:'Outfit',sans-serif;color:var(--txt);min-height:100vh;padding:12px;display:flex;justify-content:center}
-.smartphone-shell{width:100%;max-width:412px;background:#000;border-radius:40px;padding:10px;box-shadow:0 25px 60px rgba(0,0,0,0.8);border:2px solid #333}
-.screen{background:var(--ink);border-radius:32px;width:100%;height:100%;overflow-y:auto;padding:16px 12px}
-.topbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
-.app-title{font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:1px;background:var(--gold-gradient);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
-
-
-.keyboard-panel{background:var(--card);border:1px solid rgba(212,175,55,0.2);border-radius:20px;padding:12px;margin-bottom:16px}
-.grid-products{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px}
-.btn-prod{background:var(--card2);border:1px solid var(--border);color:#fff;border-radius:10px;padding:10px 4px;font-size:11px;font-weight:700;cursor:pointer;text-align:center;display:flex;flex-direction:column;align-items:center;gap:4px}
-.btn-prod:active{background:var(--border);transform:scale(0.95)}
-.btn-prod span{font-size:18px}
-
-.selector-box{display:flex;flex-direction:column;gap:4px;margin-bottom:10px;background:rgba(0,0,0,0.3);padding:8px;border-radius:10px}
-.selector-label{font-family:'DM Mono',monospace;font-size:9px;color:var(--gold-light);text-transform:uppercase}
-.grid-units{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
-.btn-unit{background:var(--ink);border:1px solid var(--border);color:var(--muted);border-radius:6px;padding:6px 2px;font-size:10px;font-weight:600;cursor:pointer}
-.btn-unit.active{background:var(--gold-gradient);color:var(--ink);border:none;font-weight:700}
-
+body{background:var(--ink);font-family:'Outfit',sans-serif;color:var(--txt);min-height:100vh;padding:16px;display:flex;justify-content:center}
+.smartphone-shell{width:100%;max-width:412px;background:#000;border-radius:40px;padding:12px;box-shadow:0 25px 60px rgba(0,0,0,0.8);border:2px solid #333}
+.screen{background:var(--ink);border-radius:32px;width:100%;height:100%;overflow-y:auto;padding:20px 16px}
+.topbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px}
+.app-title{font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:1px;background:var(--gold-gradient);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.voice-panel{background:var(--card);border:1px solid rgba(212,175,55,0.2);border-radius:20px;padding:16px;margin-bottom:20px;text-align:center}
+.mic-btn{width:56px;height:56px;border-radius:50%;background:var(--gold-gradient);border:none;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;font-size:20px;color:var(--ink);box-shadow:0 0 15px rgba(212,175,55,0.4);margin-bottom:10px}
+.mic-btn.listening{background:linear-gradient(135deg,var(--red),#ff7693);box-shadow:0 0 20px rgba(255,71,114,0.5);animation:pulse 1.2s infinite}
+@keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.05)}}
+.transcript-area{font-size:13px;color:#fff;font-weight:500;background:rgba(255,255,255,0.03);padding:8px;border-radius:10px;min-height:36px;margin-bottom:12px;line-height:1.4;border:1px solid rgba(255,255,255,0.05)}
 .section-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
 .btn-clear-all{background:transparent;border:1px solid var(--red);color:var(--red);padding:4px 8px;border-radius:6px;font-size:11px;font-weight:600;cursor:pointer}
-.items-container{display:flex;flex-direction:column;gap:10px;margin-bottom:16px;max-height:240px;overflow-y:auto}
-.empty-state{text-align:center;padding:20px;color:var(--dim);font-size:12px;border:1px dashed rgba(255,255,255,0.05);border-radius:12px}
-
-.product-card{background:var(--card);border:1px solid rgba(212,175,55,0.25);border-radius:14px;padding:10px;display:flex;flex-direction:column;gap:6px;position:relative}
-.card-row-top{font-size:13px;font-weight:700;color:#fff;text-transform:uppercase}
-.card-row-bottom{display:flex;align-items:center;justify-content:space-between;background:var(--card2);padding:4px 8px;border-radius:8px}
-.inputs-grp{display:flex;align-items:center;gap:4px;font-size:11px;color:var(--muted)}
-.input-cell{background:var(--ink);border:1px solid var(--border);color:#fff;font-family:'DM Mono',monospace;font-size:12px;padding:4px;border-radius:6px;text-align:center}
-.btn-delete-item{background:transparent;border:none;color:var(--red);font-size:14px;cursor:pointer;position:absolute;right:8px;top:8px}
-
-.total-display-box{background:var(--card2);border:1px solid var(--border);border-radius:14px;padding:12px;display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}
-.total-val{font-family:'DM Mono',monospace;font-size:22px;font-weight:700;color:var(--green)}
+.items-container{display:flex;flex-direction:column;gap:12px;margin-bottom:20px}
+.empty-state{text-align:center;padding:30px 20px;color:var(--dim);font-size:13px;border:1px dashed rgba(255,255,255,0.05);border-radius:16px}
+.product-card{background:var(--card);border:1px solid rgba(212,175,55,0.25);border-radius:16px;padding:12px;display:flex;flex-direction:column;gap:4px;position:relative}
+.prod-name-row{font-size:14px;font-weight:800;color:#fff;text-transform:uppercase;letter-spacing:0.5px}
+.prod-details-row{font-family:'DM Mono',monospace;font-size:12px;color:var(--muted);display:flex;align-items:center;gap:4px;margin-top:2px}
+.price-highlight{color:var(--green);font-weight:700}
+.btn-delete-item{background:transparent;border:none;color:var(--red);font-size:16px;cursor:pointer;padding:8px;position:absolute;right:8px;top:50%;transform:translateY(-50%)}
+.total-display-box{background:var(--card2);border:1px solid var(--border);border-radius:14px;padding:14px;display:flex;justify-content:space-between;align-items:center;margin-bottom:20px}
+.total-lbl{font-family:'Bebas Neue',sans-serif;font-size:16px;color:var(--muted)}
+.total-val{font-family:'DM Mono',monospace;font-size:20px;font-weight:700;color:var(--green)}
 .btn-pagar{width:100%;padding:14px;border-radius:14px;background:var(--gold-gradient);border:none;font-family:'Outfit',sans-serif;font-size:15px;font-weight:700;color:var(--ink);cursor:pointer;text-transform:uppercase}
 </style>
 </head>
@@ -53,129 +43,147 @@ body{background:var(--ink);font-family:'Outfit',sans-serif;color:var(--txt);min-
 <div class="smartphone-shell">
   <div class="screen">
     <div class="topbar">
-      <div class="brand"><div class="app-title">AymaPOS Express</div></div>
+      <div class="brand"><div class="app-title">AymaPOS Core</div></div>
       <div style="font-family:'DM Mono',monospace; font-size:10px; color:var(--gold-light)">● ECOKAIZEN</div>
     </div>
-    
-    <!-- PANEL DE BOTONES RÁPIDOS -->
-    <div class="keyboard-panel">
-      <div class="selector-box">
-        <div class="selector-label">1. Selecciona Medida Mayorista:</div>
-        <div class="grid-units">
-          <button class="btn-unit" onclick="setUnit(1, '1 Und', this)">1 UND</button>
-          <button class="btn-unit" onclick="setUnit(12, '1 Doz', this)">1 DOC</button>
-          <button class="btn-unit active" onclick="setUnit(25, '1/4 Ciento', this)">1/4 Cto</button>
-          <button class="btn-unit" onclick="setUnit(50, '1/2 Ciento', this)">1/2 Cto</button>
-          <button class="btn-unit" onclick="setUnit(100, '1 Ciento', this)">1 Cto</button>
-          <button class="btn-unit" onclick="setUnit(250, '1/4 Millar', this)">1/4 Mill</button>
-          <button class="btn-unit" onclick="setUnit(500, '1/2 Millar', this)">1/2 Mill</button>
-          <button class="btn-unit" onclick="setUnit(1000, '1 Millar', this)">1 Mill</button>
-        </div>
-      </div>
-
-      <div class="selector-label" style="margin-bottom: 6px;">2. Toca el Producto para agregar:</div>
-      <div class="grid-products">
-        <button class="btn-prod" onclick="addItem('Plato 15', '🍽️')"><span>🍽️</span>Plato 15</button>
-        <button class="btn-prod" onclick="addItem('Plato 22', '🍽️')"><span>🍽️</span>Plato 22</button>
-        <button class="btn-prod" onclick="addItem('Bolsa PET', '🛍️')"><span>🛍️</span>Bolsa PET</button>
-        <button class="btn-prod" onclick="addItem('Vaso 10', '🥤')"><span>🥤</span>Vaso 10</button>
-        <button class="btn-prod" onclick="addItem('Vaso 12', '🥤')"><span>🥤</span>Vaso 12</button>
-        <button class="btn-prod" onclick="addItem('Envase Deli', '📦')"><span>📦</span>Deli Ltr</button>
-        <button class="btn-prod" onclick="addItem('Arroz', '🌾')"><span>🌾</span>Arroz</button>
-        <button class="btn-prod" onclick="addItem('Polos / Ropa', '👕')"><span>👕</span>Polos</button>
-        <button class="btn-prod" onclick="addItem('Sandalias', '🩴')"><span>🩴</span>Sandalias</button>
-      </div>
+    <div class="voice-panel">
+      <button class="mic-btn" id="mic-trigger" onclick="toggleVoiceRecognition()">🔊</button>
+      <div id="mic-label" style="font-size:11px; font-weight:600; color:var(--gold-light)">Presionar y dictar despacho</div>
+      <div class="transcript-area" id="transcript-txt">"vaso 10 un paquete 3.50", "deli 1 litro un paquete 10.00"...</div>
     </div>
-
     <div class="section-header">
-      <div style="font-family:'DM Mono',monospace; font-size:10px; color:var(--gold-light); text-transform:uppercase">Items en Proforma</div>
+      <div style="font-family:'DM Mono',monospace; font-size:10px; color:var(--gold-light); text-transform:uppercase">Estructura de Comprobante</div>
       <button class="btn-clear-all" id="clear-all-btn" style="display:none;" onclick="clearEntireCart()">🗑️ Vaciar Todo</button>
     </div>
-
     <div class="items-container" id="cart-wrapper">
-      <div class="empty-state">Toca una medida arriba y añade productos.</div>
+      <div class="empty-state">Esperando dictado estructurado de almacén...</div>
     </div>
-
-    <div class="total-display-box"><span>TOTAL NETO</span><span class="total-val" id="screen-total">S/ 0.00</span></div>
+    <div class="total-display-box"><span class="total-lbl">TOTAL NETO</span><span class="total-val" id="screen-total">S/ 0.00</span></div>
     <button class="btn-pagar" onclick="window.print()">Imprimir Ticket 80mm 🖨️</button>
   </div>
 </div>
 
 <script>
-let cart = [];
-let currentQty = 25;
-let currentLabel = "1/4 Ciento";
+let cart = []; let recognition; let isListening = false;
 
-function setUnit(qty, label, btn) {
-  currentQty = qty;
-  currentLabel = label;
-  document.querySelectorAll('.btn-unit').forEach(b => b.classList.remove('active'));
-  btn.classList.add('active');
+if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+  const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+  recognition = new SpeechRecognition(); recognition.lang = 'es-PE'; recognition.continuous = false; recognition.interimResults = false;
+  recognition.onstart = () => { isListening = true; document.getElementById('mic-trigger').className = "mic-btn listening"; };
+  recognition.ononerror = () => { stopMicUI(); }; recognition.onend = () => { stopMicUI(); };
+  recognition.onresult = (event) => {
+    const textResult = event.results[0][0].transcript.toLowerCase();
+    document.getElementById('transcript-txt').innerText = `Escuché: "${event.results[0][0].transcript}"`;
+    parseStrictWholesaleVoice(textResult);
+  };
 }
 
-function addItem(name, icon) {
-  // Precio por defecto base para evitar errores (Ej: Deli 1/4 = 10 soles, Plato 1/4 = 2.25)
-  let defaultPrice = 10.00;
-  if (name.includes('Plato') && currentQty === 25) defaultPrice = 2.25;
-  if (name.includes('Plato') && currentQty === 100) defaultPrice = 9.00;
+function toggleVoiceRecognition() { if (!recognition) return; isListening ? recognition.stop() : recognition.start(); }
+function stopMicUI() { isListening = false; document.getElementById('mic-trigger').className = "mic-btn"; }
 
+// MOTOR FILTRADO PROFESIONAL DE ENTIDADES COMPUESTA
+function parseStrictWholesaleVoice(text) {
+  // Limpiar formatos de precios comunes en el habla peruana
+  let processedText = text.replace(/puntos|punto/g, '.').replace(/ soles| sol/g, '');
+  
+  // Extraer todos los números de la cadena para mapeo secuencial
+  const numbers = processedText.match(/\d+(\.\d+)?/g) ? processedText.match(/\d+(\.\d+)?/g).map(Number) : [];
+  
+  let finalProductName = "PRODUCTO GENERAL";
+  let finalQuantityLine = "1 lote";
+  let finalPriceValue = 0.00;
+
+  // 1. Extraer Tipo de Producto e Inyectar Formato de Modelo Estricto "#"
+  if (processedText.includes("vaso") || processedText.includes("bazo")) {
+    finalProductName = "VASO";
+  } else if (processedText.includes("deli") || processedText.includes("litro")) {
+    finalProductName = "DELI 1 LITRO";
+  } else if (processedText.includes("cuchara") || processedText.includes("cucharas")) {
+    finalProductName = "CUCHARA";
+  } else if (processedText.includes("bolsa") || processedText.includes("pet")) {
+    finalProductName = "BOLSA PET";
+  } else if (processedText.includes("plato")) {
+    finalProductName = "PLATO DE CAÑA";
+  }
+
+  // Buscar el número de modelo inmediatamente pegado al nombre del producto
+  if (numbers.length > 0 && finalProductName !== "DELI 1 LITRO") {
+    // Si arranca con el empaque y un número, ese primer número es obligatoriamente el modelo
+    finalProductName += " #" + numbers[0];
+  }
+
+  // 2. Extraer el modificador de la Cantidad (Ciento, Paquete, Millar, Docena)
+  let unidadMedida = "paquete";
+  if (processedText.includes("ciento")) unidadMedida = "ciento";
+  else if (processedText.includes("millar")) unidadMedida = "millar";
+  else if (processedText.includes("docena") || processedText.includes("docenas")) unidadMedida = "docena";
+  else if (processedText.includes("unidades") || processedText.includes("und")) unidadMedida = "unidades";
+  else if (processedText.includes("paquete") || processedText.includes("paquetes")) unidadMedida = "paquete";
+
+  // Determinar el número multiplicador de esa cantidad
+  let factorCantidad = 1;
+  // Buscamos si hay un número justo antes de la unidad de medida (ej: "2 paquete")
+  const qtyRegex = new RegExp(`(\\d+)\\s*${unidadMedida}`);
+  const qtyMatch = processedText.match(qtyRegex);
+  
+  if (qtyMatch) {
+    factorCantidad = parseInt(qtyMatch[1], 10);
+  } else if (processedText.includes("un " + unidadMedida) || processedText.includes("1 " + unidadMedida)) {
+    factorCantidad = 1;
+  } else if (numbers.length >= 2 && finalProductName !== "DELI 1 LITRO") {
+    // Si no hace match de texto pero hay más números libres, el segundo número suele ser el lote
+    factorCantidad = numbers[1];
+  }
+
+  // Formatear la línea de visualización de cantidad idéntica a tu solicitud
+  let pluralSufijo = factorCantidad > 1 && unidadMedida === "paquete" ? "s" : "";
+  finalQuantityLine = `${factorCantidad} ${unidadMedida}${pluralSufijo}`;
+
+  // 3. Extraer el Precio Final Neto (Aislar Soles)
+  if (numbers.length > 0) {
+    // El precio es siempre el último número decimal o entero registrado en la frase
+    finalPriceValue = numbers[numbers.length - 1];
+  }
+
+  // Validación de seguridad para evitar que el precio se duplique con el modelo si dictas incompleto
+  if (numbers.length === 1 && finalProductName.includes("#" + numbers[0])) {
+    finalPriceValue = 0.00; // No se dictó precio, se queda limpio
+  }
+
+  // Insertar bloque estructurado limpio al carrito
   cart.push({
-    name: name,
-    icon: icon,
-    qtyLabel: currentLabel,
-    price: defaultPrice
+    name: finalProductName,
+    qtyDisplay: finalQuantityLine,
+    price: Number(finalPriceValue)
   });
+
   renderCartUI();
 }
 
 function renderCartUI() {
-  const wrapper = document.getElementById('cart-wrapper');
-  const clearBtn = document.getElementById('clear-all-btn');
+  const wrapper = document.getElementById('cart-wrapper'); const clearBtn = document.getElementById('clear-all-btn');
   wrapper.innerHTML = "";
-  
   if (cart.length === 0) {
-    wrapper.innerHTML = '<div class="empty-state">Toca una medida arriba y añade productos.</div>';
-    clearBtn.style.display = "none";
-    document.getElementById('screen-total').innerText = "S/ 0.00";
-    return;
+    wrapper.innerHTML = '<div class="empty-state">Esperando dictado estructurado de almacén...</div>';
+    clearBtn.style.display = "none"; document.getElementById('screen-total').innerText = "S/ 0.00"; return;
   }
-  
-  clearBtn.style.display = "block";
-  let totalGeneral = 0;
-
+  clearBtn.style.display = "block"; let totalGeneral = 0;
   cart.forEach((item, index) => {
-    totalGeneral += Number(item.price);
-    const card = document.createElement('div');
-    card.className = 'product-card';
+    totalGeneral += item.price;
+    const card = document.createElement('div'); card.className = 'product-card';
+    
+    // Si el precio es 0, no pintar el monto en soles tal como pediste en el ejemplo de Deli
+    let priceString = item.price > 0 ? ` <span class="price-highlight">${item.price.toFixed(2)}</span>` : '';
+    
     card.innerHTML = `
-      <div class="card-row-top">${item.icon} ${item.name}</div>
-      <div class="card-row-bottom">
-        <div class="inputs-grp">
-          <span>Medida:</span>
-          <input type="text" class="input-cell" style="width: 90px;" value="${item.qtyLabel}" onchange="updateCartData(${index}, 'qtyLabel', this.value)">
-        </div>
-        <div class="inputs-grp">
-          <span>Soles:</span>
-          <input type="number" step="0.50" class="input-cell" style="width: 80px; color:var(--green); font-weight:700;" value="${Number(item.price).toFixed(2)}" oninput="updateCartData(${index}, 'price', this.value)">
-        </div>
-      </div>
+      <div class="prod-name-row">${item.name}</div>
+      <div class="prod-details-row">${item.qtyDisplay}${priceString}</div>
       <button class="btn-delete-item" onclick="deleteSingleItem(${index})">❌</button>
     `;
     wrapper.appendChild(card);
   });
-  
   document.getElementById('screen-total').innerText = 'S/ ' + totalGeneral.toFixed(2);
 }
-
-function updateCartData(index, key, val) {
-  if (key === 'price') cart[index].price = Number(val) || 0;
-  else if (key === 'qtyLabel') cart[index].qtyLabel = val;
-  
-  let totalGeneral = 0;
-  cart.forEach(item => totalGeneral += Number(item.price));
-  document.getElementById('screen-total').innerText = 'S/ ' + totalGeneral.toFixed(2);
-}
-
 function deleteSingleItem(index) { cart.splice(index, 1); renderCartUI(); }
 function clearEntireCart() { cart = []; renderCartUI(); }
 </script>
